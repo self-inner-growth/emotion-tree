@@ -31,7 +31,9 @@
       color: var(--color-text);
       display: grid;
       place-items: center;
-      padding: 16px;
+      /* 화면에 꽉 차도록 여백 제거 */
+      padding: 0; 
+      margin: 0;
       overflow: hidden;
     }
     h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; }
@@ -41,9 +43,11 @@
     
     .app-shell {
       position: relative;
-      width: min(100%, 430px);
-      height: min(100dvh, 932px);
-      border-radius: 32px;
+      width: 100%;
+      max-width: 430px; /* PC에서는 폰 너비 유지 */
+      height: 100dvh;   /* 모바일 화면 꽉 채우기 */
+      border-radius: 0; /* 둥근 모서리 제거 */
+      margin: 0 auto;
       overflow: hidden;
       box-shadow: 0 30px 80px rgba(18, 37, 54, 0.25);
       background: linear-gradient(180deg, #95c9ff, #f1f8ff);
@@ -81,6 +85,7 @@
       box-shadow: var(--shadow-sm);
       margin: 16px auto 10px;
       border: 1px solid rgba(255,255,255,0.66);
+      overflow: hidden; /* 로고 이미지가 모서리를 둥글게 따라가도록 설정 */
     }
     .hero-mark svg { width: 44px; height: 44px; color: var(--color-primary); }
     .simple-copy { text-align: center; }
@@ -333,18 +338,19 @@
     
     <section id="screen-intro" class="screen simple-screen active">
       <div class="hero-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+        <img src="Logo.jpg" alt="나의 작은 숲 로고" style="width: 100%; height: 100%; object-fit: cover;" />
       </div>
       <div class="simple-copy" style="margin-top:auto;">
         <h1>내 마음을 돌보는<br>작은 숲</h1>
         <p>하루 끝, 나를 만나는 시간에 오신 것을 환영해요.</p>
       </div>
+      
       <div style="width: 100%; display: grid; gap: 12px; margin-top: 20px;">
-        <button type="button" class="btn-primary" id="introStartBtn">새로운 나무 심기</button>
         <div style="display: flex; gap: 8px;">
           <input type="text" id="loadTreeInput" placeholder="기존 나무 이름 입력" style="flex: 1; padding: 16px;">
           <button type="button" class="btn-secondary" id="loadTreeBtn" style="width: auto; padding: 0 16px;">불러오기</button>
         </div>
+        <button type="button" class="btn-primary" id="introStartBtn">새로운 나무 심기</button>
       </div>
     </section>
 
@@ -365,7 +371,7 @@
 
     <section id="screen-name" class="screen simple-screen">
       <div class="hero-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-8"/><path d="M12 14c-4-4-6-2-6-2s2-2 6 2"/><path d="M12 14c4-4 6-2 6-2s-2-2-6 2"/></svg>
+        <img src="Logo.jpg" alt="나의 작은 숲 로고" style="width: 100%; height: 100%; object-fit: cover;" />
       </div>
       <div class="simple-copy">
         <h2>작은 씨앗이 돋아났어요</h2>
@@ -557,7 +563,7 @@
 
   <script>
     // 🔥 여기에 1단계에서 갱신/발급받은 웹 앱 URL을 붙여넣으세요! 🔥
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxEX52ldquX4wf4kT88q2MCLW4Oy0wnohxdJWc-GBgnPuwi8eqDr3Zwi_K5Gb1bZZ9L1A/exec"; 
+    const GAS_URL = "여기에_붙여넣기"; 
 
     const state = {
       mbtiSelections: { E_I: '', S_N: '', T_F: '', J_P: '' },
