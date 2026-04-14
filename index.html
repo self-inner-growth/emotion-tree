@@ -24,13 +24,14 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    /* 모바일 전체 화면 꽉 차게 만들기 및 PC 뷰포트 분리 */
     html, body { 
       width: 100%;
       height: 100%;
       margin: 0; 
       padding: 0; 
       overflow: hidden;
-      background: #e8f2ff; 
+      background: #e8f2ff; /* PC 접속 시 남는 겉 배경색 */
     }
 
     body {
@@ -41,6 +42,7 @@
       align-items: center;
     }
     
+    /* 모바일 기본 설정: 여백/테두리 없이 100% 꽉 찬 화면 */
     .app-shell {
       position: relative;
       width: 100%;
@@ -53,6 +55,7 @@
       background: linear-gradient(180deg, #95c9ff, #f1f8ff);
     }
 
+    /* 태블릿/PC(화면 너비 768px 이상)일 때만 가운데 정렬 & 둥근 모서리 앱 형태로 적용 */
     @media (min-width: 768px) {
       .app-shell {
         max-width: 430px;
@@ -115,7 +118,7 @@
     }
     .hero-mark svg { width: 44px; height: 44px; color: var(--color-primary); }
     .simple-copy { text-align: center; }
-    .simple-copy h1, .simple-copy h2 { font-size: var(--text-xl); margin-bottom: 12px; }
+    .simple-copy h1, .simple-copy h2 { margin-bottom: 12px; }
     .simple-copy p { font-size: var(--text-sm); }
     
     .btn-primary {
@@ -432,7 +435,7 @@
       </div>
       
       <div class="simple-copy" style="margin-top: 8px;">
-        <h1 style="text-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 50px rgba(255,255,255,1);">내 마음을 돌보는<br>작은 숲</h1>
+        <h1 style="font-size: 3rem; line-height: 1.2; text-shadow: 0 0 15px rgba(255,255,255,0.9), 0 0 30px rgba(255,255,255,1);">내 마음을 돌보는<br>작은 숲</h1>
       </div>
       
       <div style="width: 100%; display: grid; gap: 12px; margin-top: auto;">
