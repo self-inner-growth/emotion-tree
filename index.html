@@ -24,14 +24,13 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* 모바일 전체 화면 꽉 차게 만들기 및 PC 뷰포트 분리 */
     html, body { 
       width: 100%;
       height: 100%;
       margin: 0; 
       padding: 0; 
       overflow: hidden;
-      background: #e8f2ff; /* PC 접속 시 남는 겉 배경색 */
+      background: #e8f2ff;
     }
 
     body {
@@ -42,7 +41,6 @@
       align-items: center;
     }
     
-    /* 모바일 기본 설정: 여백/테두리 없이 100% 꽉 찬 화면 */
     .app-shell {
       position: relative;
       width: 100%;
@@ -55,7 +53,6 @@
       background: linear-gradient(180deg, #95c9ff, #f1f8ff);
     }
 
-    /* 태블릿/PC(화면 너비 768px 이상)일 때만 가운데 정렬 & 둥근 모서리 앱 형태로 적용 */
     @media (min-width: 768px) {
       .app-shell {
         max-width: 430px;
@@ -207,8 +204,7 @@
     .sparkles, .flowers, .reward-layer { position:absolute; inset:0; pointer-events:none; }
     .sparkle { position:absolute; width:10px; height:10px; border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,232,160,0.9) 46%, transparent 70%); box-shadow: 0 0 16px rgba(255,246,190,0.9); }
     
-    /* 요소들이 위부터 차곡차곡 쌓이도록 justify-content 수정 */
-    .ui-overlay { position:absolute; inset:0; z-index:10; padding:16px; display:flex; flex-direction:column; justify-content:flex-start; pointer-events:none; }
+    .ui-overlay { position:absolute; inset:0; z-index:10; padding:16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; }
     
     /* 🔥 통합된 상단 대시보드 카드 🔥 */
     .top-dashboard {
@@ -303,9 +299,7 @@
     .status-card span { font-size:12px; color: var(--color-text-muted); white-space: nowrap; }
     .status-value { width: 100%; margin-top:10px; padding:8px 14px; border-radius:999px; background: rgba(255,255,255,0.25); font-size:12px; font-weight:700; text-align:center; color: var(--color-text); border: 1px solid rgba(255,255,255,0.4); white-space: nowrap; }
     
-    /* 하단 버튼 영역을 맨 밑으로 밀어내기 위해 margin-top: auto 적용 */
     .bottom-row { display: flex; flex-direction:column; align-items:stretch; margin-top: auto; }
-    
     .bottom-panel { pointer-events:auto; display:grid; gap:12px; margin-bottom:12px; }
     
     .primary-action { width:100%; height: auto; display:flex; align-items:center; justify-content:space-between; gap:12px; background: linear-gradient(180deg, rgba(125, 222, 145, 0.8) 0%, rgba(69, 179, 107, 0.85) 100%); color:white; border-radius:24px; padding:16px 20px; box-shadow: 0 16px 30px rgba(69,179,107,0.25); text-align: left; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
@@ -420,9 +414,13 @@
   <div class="app-shell" id="appRoot">
     
     <section id="screen-intro" class="screen simple-screen active">
-      <div class="hero-mark">
+      <div class="hero-mark" style="margin-bottom: 4px;">
         <img src="Logo.jpg" alt="나의 작은 숲 로고" style="width: 100%; height: 100%; object-fit: cover;" />
       </div>
+      <div style="text-align: center; margin-bottom: 12px;">
+        <strong style="font-size: 15px; color: var(--color-primary); letter-spacing: -0.3px;">자아성장 연구소</strong>
+      </div>
+      
       <div class="simple-copy" style="margin-top:auto;">
         <h1>내 마음을 돌보는<br>작은 숲</h1>
         <p>하루 끝, 나를 만나는 시간에 오신 것을 환영해요.</p>
@@ -431,7 +429,7 @@
       <div style="width: 100%; display: grid; gap: 12px; margin-top: 20px;">
         <div style="display: flex; gap: 8px;">
           <input type="text" id="loadTreeInput" placeholder="기존 나무 이름 입력" style="flex: 1; padding: 16px; border-radius: 18px; border: 0; background: rgba(255,255,255,0.82);">
-          <button type="button" class="btn-secondary" id="loadTreeBtn" style="width: auto; padding: 0 16px;">불러오기</button>
+          <button type="button" id="loadTreeBtn" style="width: auto; padding: 0 16px; border-radius: 18px; background: linear-gradient(135deg, #7dde91 0%, var(--color-primary) 100%); color: white; font-weight: 700; border: none; box-shadow: 0 8px 16px rgba(69,179,107,0.2);">불러오기</button>
         </div>
         <button type="button" class="btn-primary" id="introStartBtn">새로운 나무 심기</button>
       </div>
@@ -502,7 +500,7 @@
               <div class="avatar" id="avatarIcon">🌱</div>
               <div class="profile-copy">
                 <strong id="uiTreeName">내마음이 · 새싹</strong>
-                <span>진행 회차 <span id="uiSession">1</span> / 4</span>
+                <span>진행 회차 <span id="uiSession">0</span> / 8</span>
               </div>
             </div>
             <div class="icon-stack">
@@ -646,11 +644,11 @@
 
   <script>
     // 🔥 여기에 최종 발급받은 웹 앱 URL을 붙여넣으세요! 🔥
-    const GAS_URL = "여기에_붙여넣기"; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxEX52ldquX4wf4kT88q2MCLW4Oy0wnohxdJWc-GBgnPuwi8eqDr3Zwi_K5Gb1bZZ9L1A/exec"; 
 
     const state = {
       mbtiSelections: { E_I: '', S_N: '', T_F: '', J_P: '' },
-      mbti: '', treeType: '', treeName: '', level: 1, session: 1, maxSession: 4,
+      mbti: '', treeType: '', treeName: '', level: 1, session: 0, maxSession: 8,
       selectedEmotion: '', textLength: 0
     };
 
@@ -785,17 +783,19 @@
         state.mbti = latest.mbti || "ENFP";
         state.treeName = treeName;
 
+        // 마음 기록 횟수에 따라서만 세션 증가
         const journalCount = history.filter(item => item.type === '마음 기록').length;
-        state.session = journalCount + 1;
+        state.session = journalCount;
 
-        if (state.session >= 4) state.level = 4;
-        else if (state.session === 3) state.level = 3;
-        else if (state.session === 2) state.level = 2;
+        // 8회차에 맞춘 레벨 매핑
+        if (state.session >= 8) state.level = 4;
+        else if (state.session >= 5) state.level = 3;
+        else if (state.session >= 2) state.level = 2;
         else state.level = 1;
 
         updateMainUI();
         
-        if (state.session > state.maxSession) {
+        if (state.session >= state.maxSession) {
           showEnding();
         } else {
           showScreen(screens.main);
@@ -904,13 +904,13 @@
 
     function closeModal() {
       el.modalOverlay.classList.remove('active');
-      if (state.session > state.maxSession) {
+      if (state.session >= state.maxSession) {
         setTimeout(showEnding, 200);
       }
     }
 
     function getProgressPercent() {
-      return Math.max(0, Math.min(100, Math.round(((state.session - 1) / state.maxSession) * 100)));
+      return Math.max(0, Math.min(100, Math.round((state.session / state.maxSession) * 100)));
     }
 
     function updateMbtiNextButton() {
@@ -1123,7 +1123,7 @@
       el.progressBadge.textContent = `${getProgressPercent()}%`;
       el.barFill.style.width = `${getProgressPercent()}%`;
       
-      if(state.session > state.maxSession) {
+      if(state.session >= state.maxSession) {
          el.focusCopy.textContent = '아름답게 자란 나무가 마지막 인사를 기다리고 있어요';
       }
       
@@ -1139,21 +1139,28 @@
     }
 
     function processGrowth() {
+      // 마음 기록시에만 세션을 증가시킵니다.
+      state.session += 1;
+      
+      // 세션에 맞춘 레벨 매핑 (8회차 기준)
+      if (state.session >= 8) state.level = 4;
+      else if (state.session >= 5) state.level = 3;
+      else if (state.session >= 2) state.level = 2;
+      else state.level = 1;
+
       let message = '';
       if (state.session === 1) {
-        state.level = 2;
-        message = '당신의 솔직한 마음 한 조각이<br>나무를 자라게 했어요.';
+        message = '첫 기록이네요! 작은 씨앗이 당신의 이야기를 듣고 있어요.';
       } else if (state.session === 2) {
+        message = '꾸준한 기록 덕분에 새싹이 어린 나무로 자라났어요!';
+      } else if (state.session === 5) {
+        message = '마음을 돌보는 시간들이 쌓여,<br>나무가 든든한 성목이 되었어요.';
+      } else if (state.session === 8) {
+        message = '정성스러운 8번의 기록이 마침내<br>아름다운 결실을 맺었습니다.';
+      } else {
         message = '오늘의 감정을 마주한 것만으로도<br>충분히 멋진 걸음입니다.';
-      } else if (state.session === 3) {
-        state.level = 3;
-        message = '마음을 돌보는 시간들이 쌓여,<br>나무가 아주 튼튼해졌어요.';
-      } else if (state.session === 4) {
-        state.level = 4;
-        message = '정성스러운 기록이 마침내<br>아름다운 결실을 맺었습니다.';
       }
       
-      state.session += 1;
       resetRecordForm();
       updateMainUI();
       setTimeout(() => showModal(message), 300);
@@ -1200,6 +1207,9 @@
         localStorage.setItem('my_tree_name', state.treeName);
         saveRecord('system', '새로운 나무가 싹을 틔웠습니다 🌱');
         
+        // 새로운 나무는 0회차부터 시작
+        state.session = 0;
+        state.level = 1;
         updateMainUI();
         showScreen(screens.main);
       });
@@ -1220,6 +1230,7 @@
       
       el.recordBackdrop.addEventListener('click', () => { closeRecordSheet(); closeWeatherSheet(); });
       
+      // 날씨 기록은 세션(회차) 증가에 영향을 주지 않음
       el.weatherConfirmBtn.addEventListener('click', () => {
         const meta = emotionMeta[state.selectedEmotion];
         saveRecord('weather', meta.label); 
@@ -1228,6 +1239,7 @@
         showToast('오늘의 날씨가 기록되고 배경에 반영됐어요');
       });
       
+      // 마음 기록시에만 세션(회차)이 증가하여 성장함
       el.waterBtn.addEventListener('click', () => {
         const text = el.reflectionInput.value.trim();
         saveRecord('journal', text); 
