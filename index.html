@@ -24,14 +24,13 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* 모바일 전체 화면 꽉 차게 만들기 및 PC 뷰포트 분리 */
     html, body { 
       width: 100%;
       height: 100%;
       margin: 0; 
       padding: 0; 
       overflow: hidden;
-      background: #e8f2ff; /* PC 접속 시 남는 겉 배경색 */
+      background: #e8f2ff;
     }
 
     body {
@@ -42,7 +41,6 @@
       align-items: center;
     }
     
-    /* 모바일 기본 설정: 여백/테두리 없이 100% 꽉 찬 화면 */
     .app-shell {
       position: relative;
       width: 100%;
@@ -55,7 +53,6 @@
       background: linear-gradient(180deg, #95c9ff, #f1f8ff);
     }
 
-    /* 태블릿/PC(화면 너비 768px 이상)일 때만 가운데 정렬 & 둥근 모서리 앱 형태로 적용 */
     @media (min-width: 768px) {
       .app-shell {
         max-width: 430px;
@@ -208,44 +205,84 @@
     .sparkle { position:absolute; width:10px; height:10px; border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,232,160,0.9) 46%, transparent 70%); box-shadow: 0 0 16px rgba(255,246,190,0.9); }
     
     .ui-overlay { position:absolute; inset:0; z-index:10; padding:16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; }
-    .top-row, .mid-row, .bottom-row { display:flex; gap:12px; align-items:center; }
-    .top-row { justify-content:space-between; align-items:flex-start; }
-    .profile-chip { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:22px; min-width:0; max-width:72%; pointer-events:auto; }
     
-    .avatar { width:42px; height:42px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3)); display:grid; place-items:center; flex-shrink:0; border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(8px); font-size: 20px; line-height: 1; }
-    
-    .profile-copy strong { display:block; font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .profile-copy > span { display:block; font-size:12px; color: var(--color-text-muted); }
+    /* 🔥 통합된 상단 대시보드 (프로필 + 버튼 + 게이지) 🔥 */
+    .top-dashboard {
+      width: 100%;
+      pointer-events: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .dash-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+    }
+    .profile-wrap { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+    }
+    .avatar { width:46px; height:46px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4)); display:grid; place-items:center; flex-shrink:0; border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(8px); font-size: 22px; line-height: 1; }
+    .profile-copy strong { display:block; font-size:15px; font-weight:700; margin-bottom: 2px; }
+    .profile-copy span { font-size:12px; color: var(--color-text-muted); }
     #uiSession { display:inline; font-weight: 700; color: var(--color-text); }
     
-    .icon-stack { display:flex; gap:10px; }
-    .icon-btn { width:48px; height:48px; border-radius:18px; display:grid; place-items:center; color:var(--color-text); pointer-events:auto; }
+    .icon-stack { display:flex; gap:8px; }
+    .icon-btn { width:46px; height:46px; border-radius:16px; display:grid; place-items:center; color:var(--color-text); pointer-events:auto; border: 1px solid rgba(255,255,255,0.5); background: rgba(255, 255, 255, 0.4); }
     .icon-btn svg { width: 22px; height: 22px; }
     
-    .mid-row { justify-content:space-between; align-items:flex-start; margin-top:auto; margin-bottom:200px; }
+    .dash-progress { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+    }
+    .dash-bar-track {
+      flex: 1;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #69d17d 0%, #a7eb88 40%, #ffdb74 100%);
+      border-radius: 999px;
+      transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .dash-percent {
+      padding: 6px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-text);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .mid-row { justify-content:space-between; align-items:flex-start; margin-top:auto; margin-bottom:200px; display: flex; }
     
     .status-card { width:auto; min-width:116px; padding:12px 14px; border-radius:22px; pointer-events:auto; text-align: center; }
     .status-card strong { display:block; font-size:14px; margin-bottom:4px; white-space: nowrap; }
     .status-card span { font-size:12px; color: var(--color-text-muted); white-space: nowrap; }
     .status-value { width: 100%; margin-top:10px; padding:8px 12px; border-radius:999px; background: rgba(255,255,255,0.25); font-size:12px; font-weight:700; text-align:center; color: var(--color-text); border: 1px solid rgba(255,255,255,0.4); white-space: nowrap; }
     
-    .bottom-row { flex-direction:column; align-items:stretch; }
+    .bottom-row { display: flex; flex-direction:column; align-items:stretch; }
     
-    .focus-banner { position:absolute; top:164px; left:50%; transform:translateX(-50%); z-index:8; padding:12px 16px; border-radius:999px; font-size:12px; color: var(--color-text-muted); pointer-events:auto; white-space:nowrap; transition: opacity 0.3s ease; }
+    .focus-banner { position:absolute; top:170px; left:50%; transform:translateX(-50%); z-index:8; padding:12px 16px; border-radius:999px; font-size:12px; color: var(--color-text-muted); pointer-events:auto; white-space:nowrap; transition: opacity 0.3s ease; }
     .focus-banner strong { color: var(--color-text); }
     
     .bottom-panel { pointer-events:auto; display:grid; gap:12px; margin-bottom:12px; }
-    .progress-shell { padding:14px 14px 12px; border-radius:28px; }
-    .progress-head { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px; }
-    .progress-title strong { display:block; font-size:16px; margin-bottom:4px; }
-    .progress-title span, .progress-badge, .action-sub { font-size:12px; color: var(--color-text-muted); line-height: 1.4; }
-    .progress-badge { padding:8px 12px; border-radius:999px; background: rgba(255,255,255,0.3); white-space:nowrap; font-weight:700; border: 1px solid rgba(255,255,255,0.3); }
-    .bar-track { position:relative; height:14px; border-radius:999px; overflow:hidden; background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3); }
-    .bar-fill { height:100%; width:0%; border-radius:inherit; background: linear-gradient(90deg, #69d17d 0%, #a7eb88 40%, #ffdb74 100%); transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
     
     .primary-action { width:100%; height: auto; display:flex; align-items:center; justify-content:space-between; gap:12px; background: linear-gradient(180deg, rgba(125, 222, 145, 0.8) 0%, rgba(69, 179, 107, 0.85) 100%); color:white; border-radius:24px; padding:16px 20px; box-shadow: 0 16px 30px rgba(69,179,107,0.25); text-align: left; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
     .primary-action strong { display:block; font-size:16px; margin-bottom: 2px; }
-    .action-sub { color: rgba(255,255,255,0.9); }
+    .action-sub { color: rgba(255,255,255,0.9); font-size: 12px; }
     .action-icon { width:46px; height:46px; border-radius:16px; background: rgba(255,255,255,0.25); display:grid; place-items:center; flex-shrink:0; color: white; border: 1px solid rgba(255,255,255,0.2); }
     .action-icon svg { width: 24px; height: 24px; fill: currentColor; }
     
@@ -432,21 +469,30 @@
       </div>
       
       <section class="ui-overlay">
-        <div class="top-row">
-          <div class="profile-chip glass">
-            <div class="avatar" id="avatarIcon">🌱</div>
-            <div class="profile-copy">
-              <strong id="uiTreeName">내마음이 · 새싹</strong>
-              <span>진행 회차 <span id="uiSession">1</span> / 4</span>
+        
+        <div class="top-dashboard glass">
+          <div class="dash-header">
+            <div class="profile-wrap">
+              <div class="avatar" id="avatarIcon">🌱</div>
+              <div class="profile-copy">
+                <strong id="uiTreeName">내마음이 · 새싹</strong>
+                <span>진행 회차 <span id="uiSession">1</span> / 4</span>
+              </div>
+            </div>
+            <div class="icon-stack">
+              <button type="button" class="icon-btn glass" id="helpBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </button>
+              <button type="button" class="icon-btn glass" id="resetBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
             </div>
           </div>
-          <div class="icon-stack">
-            <button type="button" class="icon-btn glass" id="helpBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </button>
-            <button type="button" class="icon-btn glass" id="resetBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-            </button>
+          <div class="dash-progress">
+            <div class="dash-bar-track">
+              <div class="dash-bar-fill" id="barFill"></div>
+            </div>
+            <div class="dash-percent" id="progressBadge">0%</div>
           </div>
         </div>
         
@@ -460,14 +506,6 @@
 
         <div class="bottom-row">
           <div class="bottom-panel">
-            <div class="progress-shell glass">
-              <div class="progress-head">
-                <div class="progress-title"><strong>성장 게이지</strong><span id="growthSub">꾸준한 기록이 꽃을 피웁니다</span></div>
-                <div class="progress-badge" id="progressBadge">0%</div>
-              </div>
-              <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
-            </div>
-            
             <button type="button" class="primary-action" id="openRecordBtn">
               <div>
                 <strong>오늘의 마음 기록하기</strong>
@@ -606,7 +644,7 @@
       sadness: { label: '슬픔 / 우울', weather: '차분한 비 내림', top: '#7d9bb8', bottom: '#d8e3ec', sun: false },
       anger: { label: '화 / 답답함', weather: '거친 바람', top: '#7ca7a1', bottom: '#dcebe8', sun: false },
       excitement: { label: '설렘 / 기대', weather: '별빛과 무지개', top: '#cfa7ff', bottom: '#ffe7f5', sun: true },
-      fatigue: { label: '지침 / 무기력', weather: '고요한 노을', top: '#d49f91', bottom: '#f0d7c7', sun: false }
+      fatigue: { label: '지침 / 무기력', weather: '고요한 노 노을', top: '#d49f91', bottom: '#f0d7c7', sun: false }
     };
 
     const SVGS = {
@@ -1058,8 +1096,6 @@
       el.progressBadge.textContent = `${getProgressPercent()}%`;
       el.barFill.style.width = `${getProgressPercent()}%`;
       
-      el.growthSub.textContent = state.session > state.maxSession ? '꽃이 피는 마무리 순간입니다' : `${Math.min(state.session, state.maxSession)}회차의 마음을 천천히 담아보세요`;
-      
       if(state.session > state.maxSession) {
          el.focusCopy.textContent = '아름답게 자란 나무가 마지막 인사를 기다리고 있어요';
       }
@@ -1125,17 +1161,14 @@
     }
 
     function bindEvents() {
-      // 새로운 나무 심기
       el.introStartBtn.addEventListener('click', () => showScreen(screens.mbti));
       
-      // 내 나무 불러오기
       el.loadTreeBtn.addEventListener('click', () => {
         handleLoadTree(el.loadTreeInput.value.trim());
       });
 
       el.mbtiNextBtn.addEventListener('click', () => showScreen(screens.name));
       el.nameNextBtn.addEventListener('click', () => {
-        // 새로 심을 때 이름 기억하고 기록 전송을 통해 시트 생성
         state.treeName = el.treeNameInput.value.trim();
         localStorage.setItem('my_tree_name', state.treeName);
         saveRecord('system', '새로운 나무가 싹을 틔웠습니다 🌱');
