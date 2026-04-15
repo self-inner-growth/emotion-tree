@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <title>자아성장 연구소_나의 숲</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +24,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    /* 🔥 안드로이드 스와이프 새로고침 방지 & 텍스트 복사(선택) 금지 🔥 */
     html, body { 
       width: 100%;
       height: 100%;
@@ -31,13 +32,14 @@
       padding: 0; 
       overflow: hidden;
       background: #e8f2ff; 
-      overscroll-behavior-y: none;
-      -webkit-user-select: none;
+      overscroll-behavior-y: none; /* 스와이프 새로고침 방지 */
+      -webkit-user-select: none; /* 텍스트 복사 금지 */
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
     }
     
+    /* 입력창과 텍스트박스는 선택 및 복사 가능하도록 예외 처리 */
     input, textarea {
       -webkit-user-select: auto;
       -moz-user-select: auto;
@@ -87,12 +89,15 @@
       transform: translateY(8px);
       transition: opacity 220ms ease, transform 220ms ease;
     }
+    
+    /* 🔥 빈 화면 에러 방지용: 첫 로딩 시 active 부여 🔥 */
     .screen.active {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
       z-index: 1;
     }
+    
     .simple-screen {
       padding: 28px 24px 24px;
       background: linear-gradient(180deg, #f7fbff 0%, #eef7f2 100%);
@@ -103,6 +108,7 @@
       overflow-y: auto;
     }
 
+    /* 대소문자 구분이 중요하므로 파일명을 Background.png 로 정확히 맞춤 */
     #screen-intro {
       background: url('Background.png') center center / cover no-repeat !important;
     }
@@ -191,20 +197,14 @@
     .scene { position:absolute; inset:0; overflow:hidden; }
     .sun-glow { position:absolute; top:74px; right:38px; width:124px; height:124px; border-radius:50%; background: radial-gradient(circle, rgba(255,239,173,0.95) 0%, rgba(255,239,173,0.42) 45%, transparent 72%); z-index:1; }
     
-    @keyframes drift {
-      from { transform: translateX(-150px); }
-      to { transform: translateX(calc(100vw + 150px)); }
-    }
+    @keyframes drift { from { transform: translateX(-150px); } to { transform: translateX(calc(100vw + 150px)); } }
     .cloud { position:absolute; z-index:1; animation: drift linear infinite; }
     .cloud svg { width:120px; height:auto; opacity: 0.85; filter: drop-shadow(0 8px 8px rgba(255,255,255,0.4)); }
     .cloud.c1 { top:82px; animation-duration: 45s; } 
     .cloud.c2 { top:138px; animation-duration: 35s; animation-delay: -15s; }
     .cloud.c2 svg { width:150px; }
 
-    @keyframes mountainSway {
-      0%, 100% { transform: translateX(-2%); }
-      50% { transform: translateX(2%); }
-    }
+    @keyframes mountainSway { 0%, 100% { transform: translateX(-2%); } 50% { transform: translateX(2%); } }
     .layer { position:absolute; inset:auto 0 0 0; width: 110%; left: -5%; }
     .mountains-back { height:38%; bottom:28%; z-index:1; animation: mountainSway 18s ease-in-out infinite; background: radial-gradient(circle at 15% 92%, rgba(189,232,195,0.95) 0 20%, transparent 20.5%), radial-gradient(circle at 42% 102%, rgba(153,220,176,0.95) 0 28%, transparent 28.5%), radial-gradient(circle at 76% 98%, rgba(170,228,184,0.95) 0 26%, transparent 26.5%); }
     .hills-mid { height:34%; bottom:18%; z-index:2; animation: mountainSway 14s ease-in-out infinite reverse; background: radial-gradient(ellipse at 10% 100%, #8fd6a2 0 34%, transparent 35%), radial-gradient(ellipse at 42% 100%, #7dd092 0 36%, transparent 37%), radial-gradient(ellipse at 88% 100%, #74cb8a 0 33%, transparent 34%); }
@@ -216,19 +216,11 @@
     
     .tree-stage { position:absolute; inset:0; z-index:6; display:grid; place-items:end center; padding-bottom:110px; perspective: 1000px; }
     
-    @keyframes treeSway {
-      0%, 100% { transform: rotate(-1.5deg); }
-      50% { transform: rotate(1.5deg); }
-    }
-    @keyframes levelUpPulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,215,0,0)); }
-      40% { transform: scale(1.08); filter: drop-shadow(0 0 30px rgba(255,215,0,0.8)); }
-      100% { transform: scale(1); filter: drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); }
-    }
+    @keyframes treeSway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+    @keyframes levelUpPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,215,0,0)); } 40% { transform: scale(1.08); filter: drop-shadow(0 0 30px rgba(255,215,0,0.8)); } 100% { transform: scale(1); filter: drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); } }
     
     .tree-wrap { position:relative; width:min(88vw, 380px); aspect-ratio:1 / 1.25; transform-origin: center bottom; animation: treeSway 6s ease-in-out infinite; filter: drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); transition: transform 0.5s ease; }
     .tree-wrap.level-up { animation: levelUpPulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-    
     .tree-shadow { position:absolute; bottom:2px; left:50%; width:60%; height:10%; transform:translateX(-50%); background: radial-gradient(ellipse at center, rgba(38, 92, 45, 0.4) 0%, rgba(38, 92, 45, 0.1) 55%, transparent 72%); filter: blur(6px); transition: all 1s ease; }
     
     /* 🔥 동적 SVG 나무 CSS 🔥 */
@@ -245,7 +237,6 @@
     @keyframes particleBreath { 0%, 100% { opacity: 0.42; transform: translateY(0); } 50% { opacity: 0.95; transform: translateY(-5px); } }
     @keyframes bloomBreath { 0%, 100% { transform: scale(1); opacity: 0.92; } 50% { transform: scale(1.04); opacity: 1; } }
 
-    /* 파티클 버스트 효과 */
     .tree-burst { position: absolute; inset: 28% 28% auto 28%; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95) 0 8%, transparent 9%), radial-gradient(circle, rgba(255,225,138,0.8) 0 10%, transparent 11%); filter: blur(8px); animation: burstFade 0.9s ease-out forwards; pointer-events: none; z-index: 10;}
     @keyframes burstFade { 0% { transform: scale(0.5); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
     
@@ -279,6 +270,7 @@
     .bottom-row { display: flex; flex-direction:column; align-items:stretch; margin-top: auto; }
     .bottom-panel { pointer-events:auto; display:grid; gap:12px; margin-bottom:12px; }
     
+    /* 기본 버튼 디자인 */
     .primary-action { width:100%; height: auto; display:flex; align-items:center; justify-content:space-between; gap:12px; background: linear-gradient(180deg, rgba(125, 222, 145, 0.8) 0%, rgba(69, 179, 107, 0.85) 100%); color:white; border-radius:24px; padding:16px 20px; box-shadow: 0 16px 30px rgba(69,179,107,0.25); text-align: left; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s; }
     .primary-action:active { transform: scale(0.97); }
     .primary-action strong { display:block; font-size:16px; margin-bottom: 2px; }
@@ -286,6 +278,7 @@
     .action-icon { width:46px; height:46px; border-radius:16px; background: rgba(255,255,255,0.25); display:grid; place-items:center; flex-shrink:0; color: white; border: 1px solid rgba(255,255,255,0.2); }
     .action-icon svg { width: 24px; height: 24px; fill: currentColor; }
     
+    /* 완성되었을 때 비활성화된 버튼 디자인 */
     .primary-action.completed { background: rgba(255,255,255,0.6); color: var(--color-text); box-shadow: none; cursor: default; }
     .primary-action.completed:active { transform: scale(1); }
     .primary-action.completed .action-sub { color: var(--color-text-muted); }
@@ -323,12 +316,14 @@
     
     #screen-record.active, #screen-weather.active { transform:translateY(0); pointer-events:auto; }
 
+    /* 🔥 스와이프 핸들 영역 터치 면적 확장 🔥 */
     .sheet-handle-wrap { width: 100%; height: 30px; display: flex; justify-content: center; align-items: center; margin-top: -10px; margin-bottom: 10px;}
     .sheet-handle { width:52px; height:6px; border-radius:999px; background: rgba(110,130,148,0.28); }
     
     .sheet-inner { height:100%; display:flex; flex-direction:column; gap:18px; }
     .emotion-grid { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
     
+    /* 감정별 맞춤 색상 표시 */
     .emotion-btn { 
       background: rgba(255,255,255,0.7); padding:12px 16px; border-radius:999px; font-size:14px; 
       color: var(--color-text-muted); border:1px solid rgba(255,255,255,0.5);
@@ -361,7 +356,6 @@
     @keyframes rainFall { 0% { transform: translateY(-20px) scaleY(1); opacity: 0; } 20% { opacity: 0.8; } 80% { opacity: 0.8; } 100% { transform: translateY(100vh) scaleY(1.5); opacity: 0; } }
     @keyframes windBlow { 0% { transform: translateX(100vw) rotate(-15deg); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { transform: translateX(-30vw) rotate(-15deg); opacity: 0; } }
     @keyframes starTwinkle { 0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); } 50% { opacity: 1; transform: scale(1.3) rotate(45deg); box-shadow: 0 0 20px rgba(255, 240, 180, 0.9), 0 0 40px rgba(255, 255, 255, 0.6); } }
-    .css-star { position: absolute; width: 10px; height: 10px; background: #fff; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
   </style>
 </head>
 <body>
@@ -372,7 +366,7 @@
         <img src="Logo.jpg" alt="나의 작은 숲 로고" style="width: 100%; height: 100%; object-fit: cover;" />
       </div>
       <div style="text-align: center; margin-bottom: 4px;">
-        <strong style="font-size: 16px; color: var(--color-text); letter-spacing: -0.3px; font-weight: 700;">자아성장 연구소</strong>
+        <strong style="font-family: var(--font-display); font-size: 16px; color: var(--color-text); letter-spacing: -0.3px; font-weight: 700;">자아성장 연구소</strong>
       </div>
       <div class="simple-copy" style="margin-top: 8px;">
         <h1 style="font-size: 3rem; line-height: 1.2; text-shadow: 0 0 15px rgba(255,255,255,0.9), 0 0 30px rgba(255,255,255,1);">내 마음을 돌보는<br>작은 숲</h1>
@@ -457,9 +451,6 @@
             <div class="icon-stack">
               <button type="button" class="icon-btn glass" id="helpBtn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </button>
-              <button type="button" class="icon-btn glass" id="resetBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               </button>
             </div>
           </div>
@@ -586,7 +577,7 @@
 
     const state = {
       mbtiSelections: { E_I: '', S_N: '', T_F: '', J_P: '' },
-      mbti: '', treeType: '', treeName: '', session: 0, maxSession: 8,
+      mbti: '', treeType: '', treeName: '', level: 0, session: 0, maxSession: 8,
       selectedEmotion: '', textLength: 0
     };
 
@@ -663,7 +654,6 @@
       recordBackdrop: document.getElementById('recordBackdrop'),
       waterBtn: document.getElementById('waterBtn'),
       helpBtn: document.getElementById('helpBtn'),
-      resetBtn: document.getElementById('resetBtn'),
       modalConfirmBtn: document.getElementById('modalConfirmBtn'),
       modalOverlay: document.getElementById('modalOverlay'),
       modalText: document.getElementById('modalText'),
@@ -792,7 +782,6 @@
     }
 
     function buildTreeSVG({ styleKey, visual, mood, metrics }) {
-      // 씨앗(0) 단계일 때는 흙무더기만 표시
       if (metrics.growth === 0) {
         return `
           <svg viewBox="0 0 320 420" class="tree-svg tree-svg--${styleKey}" aria-hidden="true">
@@ -872,12 +861,15 @@
       const savedTreeName = localStorage.getItem('my_tree_name');
       if (savedTreeName) {
         el.loadTreeInput.value = savedTreeName;
+        // 새로고침 시 인트로 화면 깜빡임 없이 바로 불러오기 실행
         await handleLoadTree(savedTreeName, true);
       } else {
+        // 저장된 나무가 없으면 intro 화면을 부드럽게 표시
         showScreen(screens.intro);
       }
     }
 
+    // isAutoLoad가 true면 자동 로그인 상태이므로, 실패 시에만 인트로 화면으로 돌려보냄
     async function handleLoadTree(treeName, isAutoLoad = false) {
       if (!treeName) {
         showToast("나무 이름을 입력해주세요!");
@@ -900,6 +892,7 @@
         state.mbti = latest.mbti || "ENFP";
         state.treeName = treeName;
 
+        // 🔥 시스템 메시지는 제외하고 순수 마음 기록 횟수만 카운트 🔥
         const journalCount = history.filter(item => item.type === '마음 기록').length;
         state.session = journalCount;
 
@@ -955,7 +948,9 @@
       }
 
       history.forEach(item => {
-        if(item.type === '시스템') return; // 시스템 메시지는 유저 기록 목록에서 제외
+        // 🔥 시스템 메시지(씨앗 생성 등)는 히스토리에 표시하지 않음 🔥
+        if(item.type === '시스템') return; 
+        
         const card = document.createElement('div');
         card.className = 'history-card';
         const badgeClass = item.type === '날씨' ? 'type-badge' : 'type-badge journal';
@@ -1236,6 +1231,29 @@
       setTimeout(() => showModal(message), 600);
     }
 
+    function handleMbtiClick(event) {
+      const btn = event.currentTarget;
+      const row = btn.closest('.mbti-row');
+      const group = row.dataset.group;
+      
+      row.querySelectorAll('.mbti-btn').forEach(node => node.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.mbtiSelections[group] = btn.dataset.type;
+      
+      updateMbtiNextButton();
+    }
+
+    function handleEmotionClick(event) {
+      const btn = event.currentTarget;
+      document.querySelectorAll('.emotion-btn').forEach(node => node.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.selectedEmotion = btn.dataset.emo;
+      
+      updateRecordButton();
+      updateWeatherConfirmButton();
+    }
+
+    // 🔥 팝업 핸들 스와이프 기능 (아래로 드래그 시 닫기) 🔥
     function setupSwipeToClose(sheetElement, closeCallback) {
       let startY = 0;
       let currentY = 0;
@@ -1306,6 +1324,7 @@
       
       el.recordBackdrop.addEventListener('click', () => { closeRecordSheet(); closeWeatherSheet(); });
       
+      // 스와이프 기능 세팅
       setupSwipeToClose(screens.record, closeRecordSheet);
       setupSwipeToClose(screens.weather, closeWeatherSheet);
       
@@ -1334,9 +1353,10 @@
       });
 
       el.helpBtn.addEventListener('click', () => showToast('날씨를 먼저 고르고 오늘 마음을 남겨주세요'));
-      
+      el.resetBtn.addEventListener('click', () => {
         if(confirm('진행 사항을 처음부터 다시 하시겠습니까?\n(다른 나무 이름으로 시작할 수 있습니다)')){
-        
+            localStorage.removeItem('my_tree_name');
+            window.location.reload();
         }
       });
       el.modalConfirmBtn.addEventListener('click', closeModal);
