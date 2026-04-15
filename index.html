@@ -24,7 +24,6 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* 🔥 안드로이드 스와이프 새로고침 방지 & 텍스트 복사(선택) 금지 🔥 */
     html, body { 
       width: 100%;
       height: 100%;
@@ -32,14 +31,13 @@
       padding: 0; 
       overflow: hidden;
       background: #e8f2ff; 
-      overscroll-behavior-y: none; /* 스와이프 새로고침 방지 */
-      -webkit-user-select: none; /* 텍스트 복사 금지 */
+      overscroll-behavior-y: none;
+      -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
     }
     
-    /* 입력창과 텍스트박스는 선택 및 복사 가능하도록 예외 처리 */
     input, textarea {
       -webkit-user-select: auto;
       -moz-user-select: auto;
@@ -232,7 +230,24 @@
     .tree-wrap.level-up { animation: levelUpPulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     
     .tree-shadow { position:absolute; bottom:2px; left:50%; width:60%; height:10%; transform:translateX(-50%); background: radial-gradient(ellipse at center, rgba(38, 92, 45, 0.4) 0%, rgba(38, 92, 45, 0.1) 55%, transparent 72%); filter: blur(6px); transition: all 1s ease; }
-    .tree-art { width:100%; height:100%; display:block; overflow: visible; }
+    
+    /* 🔥 동적 SVG 나무 CSS 🔥 */
+    .tree-art { width: 100%; height: 100%; display: block; overflow: visible; }
+    .tree-svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 18px 18px rgba(50, 93, 67, 0.14)); }
+    .tree-back-leaves, .tree-front-leaves, .tree-bloom, .tree-particles { transform-origin: 50% 72%; }
+    .tree-back-leaves { animation: canopyFloatBack calc(7s / var(--tree-sway-scale, 1)) ease-in-out infinite; }
+    .tree-front-leaves { animation: canopyFloatFront calc(5.6s / var(--tree-sway-scale, 1)) ease-in-out infinite; }
+    .tree-particles { animation: particleBreath 4.8s ease-in-out infinite; }
+    .tree-bloom { animation: bloomBreath 4.2s ease-in-out infinite; }
+
+    @keyframes canopyFloatBack { 0%, 100% { transform: translateX(-2px) rotate(-1.2deg); } 50% { transform: translateX(2px) rotate(1.2deg); } }
+    @keyframes canopyFloatFront { 0%, 100% { transform: translateX(-3px) rotate(-1.8deg); } 50% { transform: translateX(3px) rotate(1.8deg); } }
+    @keyframes particleBreath { 0%, 100% { opacity: 0.42; transform: translateY(0); } 50% { opacity: 0.95; transform: translateY(-5px); } }
+    @keyframes bloomBreath { 0%, 100% { transform: scale(1); opacity: 0.92; } 50% { transform: scale(1.04); opacity: 1; } }
+
+    /* 파티클 버스트 효과 */
+    .tree-burst { position: absolute; inset: 28% 28% auto 28%; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95) 0 8%, transparent 9%), radial-gradient(circle, rgba(255,225,138,0.8) 0 10%, transparent 11%); filter: blur(8px); animation: burstFade 0.9s ease-out forwards; pointer-events: none; z-index: 10;}
+    @keyframes burstFade { 0% { transform: scale(0.5); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
     
     .ui-overlay { position:absolute; inset:0; z-index:10; padding:16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; }
     
@@ -306,10 +321,8 @@
     .history-card .type-badge.journal { background: #e7fff0; color: #45b36b; }
     .history-card .content { font-size: 14px; line-height: 1.5; color: var(--color-text); }
     
-    /* 팝업 활성화 클래스 */
     #screen-record.active, #screen-weather.active { transform:translateY(0); pointer-events:auto; }
 
-    /* 🔥 스와이프 핸들 영역을 터치하기 쉽게 확장 🔥 */
     .sheet-handle-wrap { width: 100%; height: 30px; display: flex; justify-content: center; align-items: center; margin-top: -10px; margin-bottom: 10px;}
     .sheet-handle { width:52px; height:6px; border-radius:999px; background: rgba(110,130,148,0.28); }
     
@@ -577,7 +590,7 @@
       selectedEmotion: '', textLength: 0
     };
 
-    // 이미지 파일을 위한 스타일 이름 매핑 (baobab, meta, birch, blossom, pine, oak, palm, maple)
+    // 🌟 나무 스타일 메타 데이터 (새로운 SVG 엔진용) 🌟
     const treeDataMap = {
       INTJ: { type: '바오밥', style: 'baobab' }, INTP: { type: '바오밥', style: 'baobab' },
       ENTJ: { type: '메타세쿼이아', style: 'meta' }, ENTP: { type: '메타세쿼이아', style: 'meta' },
@@ -587,6 +600,28 @@
       ESTJ: { type: '참나무', style: 'oak' }, ESFJ: { type: '참나무', style: 'oak' },
       ISTP: { type: '야자수', style: 'palm' }, ISFP: { type: '야자수', style: 'palm' },
       ESTP: { type: '단풍나무', style: 'maple' }, ESFP: { type: '단풍나무', style: 'maple' }
+    };
+
+    // 🌟 새로운 8종 나무 시각 파라미터 (색상, 실루엣, 개화 여부) 🌟
+    const treeVisualMap = {
+      oak: { silhouette: "round", trunk: "#7b5232", leaf: "#5fbf6f", leafDark: "#3f8d52", accent: "#9adf8d", bloom: false },
+      blossom: { silhouette: "soft", trunk: "#7c5a48", leaf: "#f2b7d2", leafDark: "#d98ab1", accent: "#ffe3ef", bloom: true },
+      pine: { silhouette: "cone", trunk: "#6f4e37", leaf: "#3e8b63", leafDark: "#2b6046", accent: "#8fd3a8", bloom: false },
+      maple: { silhouette: "wide", trunk: "#7a4d31", leaf: "#ff6b6b", leafDark: "#c0392b", accent: "#ff9f43", bloom: false },
+      baobab: { silhouette: "wide", trunk: "#8e7c68", leaf: "#8ea667", leafDark: "#5a7a3e", accent: "#c2d6a4", bloom: true },
+      meta: { silhouette: "cone", trunk: "#8a5a33", leaf: "#8ae07d", leafDark: "#2f7f4a", accent: "#bcf2b3", bloom: false },
+      birch: { silhouette: "soft", trunk: "#e2e8f0", leaf: "#c8f3ab", leafDark: "#73b35a", accent: "#e9fcd8", bloom: false },
+      palm: { silhouette: "round", trunk: "#a68862", leaf: "#7bc05b", leafDark: "#2b6e26", accent: "#aee096", bloom: false }
+    };
+
+    // 🌟 감정별 나무 렌더링 톤 & 날씨 배경 매핑 🌟
+    const emotionTreeTone = {
+      default: { hue: 0, sat: 1, glow: "#ffffff", sway: 1, leafShift: 0 },
+      joy: { hue: 8, sat: 1.08, glow: "#ffe27a", sway: 1.02, leafShift: 8 },
+      sadness: { hue: -18, sat: 0.82, glow: "#c9def5", sway: 0.96, leafShift: -12 },
+      anger: { hue: -30, sat: 0.88, glow: "#c7efe7", sway: 1.12, leafShift: -18 },
+      excitement: { hue: 18, sat: 1.15, glow: "#f7ccff", sway: 1.18, leafShift: 12 },
+      fatigue: { hue: -8, sat: 0.78, glow: "#f4c7a6", sway: 0.9, leafShift: -8 }
     };
 
     const emotionMeta = {
@@ -662,6 +697,165 @@
       history: document.getElementById('screen-history')
     };
 
+    /* ==============================================================
+       🌟 동적 SVG 엔진 코어 (수학적 계산 및 레이어 구조화) 🌟
+       ============================================================== */
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function hexToRgb(hex) {
+      const normalized = hex.replace("#", "");
+      const bigint = parseInt(normalized.length === 3 ? normalized.split("").map(v => v + v).join("") : normalized, 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map(v => clamp(Math.round(v), 0, 255).toString(16).padStart(2, "0")).join("");
+    }
+
+    function lighten(hex, amount = 10) {
+      const { r, g, b } = hexToRgb(hex);
+      return rgbToHex(r + (255 - r) * (amount / 100), g + (255 - g) * (amount / 100), b + (255 - b) * (amount / 100));
+    }
+
+    function darken(hex, amount = 10) {
+      const { r, g, b } = hexToRgb(hex);
+      return rgbToHex(r * (1 - amount / 100), g * (1 - amount / 100), b * (1 - amount / 100));
+    }
+
+    function getTreeMetrics() {
+      const growth = Math.max(0, Math.min(1, state.session / state.maxSession));
+      return {
+        growth,
+        trunkScale: 0.72 + growth * 0.34,
+        canopyScale: 0.58 + growth * 0.52,
+        leafDensity: 6 + Math.round(growth * 18),
+        glowStrength: 0.08 + growth * 0.22
+      };
+    }
+
+    function buildTrunkSVG(visual) {
+      return `
+        <path d="M146 320 C148 274, 144 232, 153 190 C158 165, 159 130, 160 96 C161 132, 166 160, 171 188 C179 230, 174 274, 176 320 Z" fill="url(#trunkGrad)"/>
+        <path d="M158 208 C132 192, 116 170, 102 138" fill="none" stroke="${darken(visual.trunk, 8)}" stroke-width="12" stroke-linecap="round"/>
+        <path d="M163 185 C190 170, 212 144, 226 114" fill="none" stroke="${darken(visual.trunk, 6)}" stroke-width="11" stroke-linecap="round"/>
+        <path d="M158 242 C132 230, 116 214, 96 198" fill="none" stroke="${darken(visual.trunk, 10)}" stroke-width="9" stroke-linecap="round"/>
+        <path d="M166 232 C191 220, 215 205, 236 184" fill="none" stroke="${darken(visual.trunk, 10)}" stroke-width="9" stroke-linecap="round"/>
+      `;
+    }
+
+    function buildLeafCluster({ count, radiusX, radiusY, color, opacity, yOffset = 0 }) {
+      if(count <= 0) return "";
+      const leaves = [];
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count;
+        const jitterX = Math.sin(i * 1.7) * 10;
+        const jitterY = Math.cos(i * 1.3) * 8;
+        const x = 160 + Math.cos(angle) * radiusX * (0.55 + (i % 3) * 0.12) + jitterX;
+        const y = 165 + Math.sin(angle) * radiusY * (0.45 + (i % 4) * 0.1) + jitterY + yOffset;
+        const rx = 18 + (i % 4) * 4;
+        const ry = 14 + (i % 3) * 4;
+        leaves.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" fill="${color}" opacity="${opacity}" />`);
+      }
+      return leaves.join("");
+    }
+
+    function buildBloomCluster(metrics, mood) {
+      if (metrics.growth < 1) return "";
+      const count = Math.max(4, Math.round(metrics.leafDensity * 0.35));
+      const nodes = [];
+      for (let i = 0; i < count; i++) {
+        const x = 90 + (i * 17) % 140;
+        const y = 90 + (i * 29) % 120;
+        nodes.push(`
+          <g transform="translate(${x} ${y}) scale(${0.7 + (i % 3) * 0.15})">
+            <circle cx="0" cy="0" r="6" fill="#ffd9eb" opacity="0.95"/>
+            <circle cx="5" cy="-2" r="5" fill="#ffc7df" opacity="0.88"/>
+            <circle cx="-4" cy="-3" r="5" fill="#ffe8f2" opacity="0.88"/>
+          </g>
+        `);
+      }
+      return nodes.join("");
+    }
+
+    function buildParticleLayer(metrics, mood) {
+      const count = Math.round(6 + metrics.glowStrength * 18);
+      let out = "";
+      for (let i = 0; i < count; i++) {
+        const x = 100 + (i * 21) % 120;
+        const y = 90 + (i * 19) % 150;
+        const r = 1.8 + (i % 3);
+        out += `<circle cx="${x}" cy="${y}" r="${r}" fill="${mood.glow}" opacity="${0.35 + (i % 4) * 0.12}" />`;
+      }
+      return out;
+    }
+
+    function buildTreeSVG({ styleKey, visual, mood, metrics }) {
+      // 씨앗(0) 단계일 때는 흙무더기만 표시
+      if (metrics.growth === 0) {
+        return `
+          <svg viewBox="0 0 320 420" class="tree-svg tree-svg--${styleKey}" aria-hidden="true">
+            <ellipse cx="160" cy="330" rx="40" ry="12" fill="${darken(visual.trunk, 10)}" opacity="0.8"/>
+            <path d="M140 330 Q160 310 180 330 Z" fill="${visual.trunk}"/>
+          </svg>
+        `;
+      }
+
+      const leavesBack = buildLeafCluster({
+        count: Math.round(metrics.leafDensity * 0.7),
+        radiusX: 92 * metrics.canopyScale,
+        radiusY: 72 * metrics.canopyScale,
+        color: visual.leafDark,
+        opacity: 0.72,
+        yOffset: -8
+      });
+
+      const leavesFront = buildLeafCluster({
+        count: metrics.leafDensity,
+        radiusX: 110 * metrics.canopyScale,
+        radiusY: 88 * metrics.canopyScale,
+        color: visual.leaf,
+        opacity: 0.96,
+        yOffset: 8
+      });
+
+      const blossoms = visual.bloom ? buildBloomCluster(metrics, mood) : "";
+
+      return `
+        <svg viewBox="0 0 320 420" class="tree-svg tree-svg--${styleKey}" aria-hidden="true">
+          <defs>
+            <filter id="treeGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="${6 + metrics.glowStrength * 18}" result="blur"/>
+              <feColorMatrix in="blur" type="matrix"
+                values="1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        0 0 0 ${0.35 + metrics.glowStrength} 0"/>
+            </filter>
+            <linearGradient id="trunkGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${lighten(visual.trunk, 10)}"/>
+              <stop offset="100%" stop-color="${darken(visual.trunk, 10)}"/>
+            </linearGradient>
+          </defs>
+          <g class="tree-aura" filter="url(#treeGlow)" opacity="${metrics.glowStrength}">
+            <ellipse cx="160" cy="170" rx="${65 + metrics.canopyScale * 62}" ry="${45 + metrics.canopyScale * 42}" fill="${mood.glow}" />
+          </g>
+          <g class="tree-back-leaves">${leavesBack}</g>
+          <g class="tree-trunk" transform="translate(160 325) scale(${metrics.trunkScale}) translate(-160 -325)">
+            ${buildTrunkSVG(visual)}
+          </g>
+          <g class="tree-front-leaves">${leavesFront}</g>
+          <g class="tree-bloom">${blossoms}</g>
+          <g class="tree-particles">${buildParticleLayer(metrics, mood)}</g>
+        </svg>
+      `;
+    }
+
+    /* ==============================================================
+       🌟 앱 메인 기능 및 연동 🌟
+       ============================================================== */
+
     async function fetchHistory(treeName) {
       if (!GAS_URL || GAS_URL === "여기에_붙여넣기") return [];
       try {
@@ -678,15 +872,12 @@
       const savedTreeName = localStorage.getItem('my_tree_name');
       if (savedTreeName) {
         el.loadTreeInput.value = savedTreeName;
-        // 새로고침 시 인트로 화면 깜빡임 없이 바로 불러오기 실행
         await handleLoadTree(savedTreeName, true);
       } else {
-        // 저장된 나무가 없으면 인트로 화면 표시
         showScreen(screens.intro);
       }
     }
 
-    // isAutoLoad가 true면 자동 로그인 상태이므로, 실패 시에만 인트로 화면으로 돌려보냄
     async function handleLoadTree(treeName, isAutoLoad = false) {
       if (!treeName) {
         showToast("나무 이름을 입력해주세요!");
@@ -724,13 +915,12 @@
         }
       } else {
         if(isAutoLoad) showScreen(screens.intro);
-        showToast("존재하지 않는 나무 이름입니다.");
+        else showToast("존재하지 않는 나무 이름입니다.");
         localStorage.removeItem('my_tree_name');
       }
     }
 
     async function saveRecord(type, content) {
-      // type 지정 로직 확실하게 분류 (시스템 메시지가 기록으로 카운트되지 않도록 수정)
       let recordType = '마음 기록';
       if (type === 'weather') recordType = '날씨';
       if (type === 'system') recordType = '시스템';
@@ -765,6 +955,7 @@
       }
 
       history.forEach(item => {
+        if(item.type === '시스템') return; // 시스템 메시지는 유저 기록 목록에서 제외
         const card = document.createElement('div');
         card.className = 'history-card';
         const badgeClass = item.type === '날씨' ? 'type-badge' : 'type-badge journal';
@@ -862,14 +1053,19 @@
       el.weatherConfirmBtn.disabled = !state.selectedEmotion;
     }
 
-    // 🔥 동적 이미지 파일 삽입 방식 🔥
-    // 사용자가 업로드할 파일명 규칙에 따라 img 태그를 생성합니다. (예: oak_0.png, baobab_8.png)
     function renderTree() {
-      const data = treeDataMap[state.mbti] || { style: 'oak' };
-      // 현재 세션(0~8)에 맞춰 이미지를 가져옵니다. 최대치는 8단계입니다.
-      const currentLevel = Math.min(state.session, 8); 
-      
-      el.treeArt.innerHTML = `<img src="${data.style}_${currentLevel}.png" alt="${data.style} 나무" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 15px 15px rgba(50, 93, 67, 0.15));" />`;
+      const styleKey = treeDataMap[state.mbti]?.style || "oak";
+      const visual = treeVisualMap[styleKey] || treeVisualMap.oak;
+      const mood = emotionTreeTone[state.selectedEmotion || "default"];
+      const metrics = getTreeMetrics();
+
+      el.treeArt.innerHTML = buildTreeSVG({ styleKey, visual, mood, metrics });
+
+      const treeWrap = document.querySelector(".tree-wrap");
+      if (treeWrap) {
+        treeWrap.style.setProperty("--tree-sway-scale", mood.sway);
+        treeWrap.style.setProperty("--tree-glow", mood.glow);
+      }
     }
 
     function renderWeather() {
@@ -1003,6 +1199,13 @@
       el.waterBtn.disabled = !(state.selectedEmotion && state.textLength >= 5);
     }
 
+    function burstTreeParticles() {
+      const burst = document.createElement("div");
+      burst.className = "tree-burst";
+      el.treeArt.appendChild(burst);
+      setTimeout(() => burst.remove(), 900);
+    }
+
     function processGrowth() {
       state.session += 1;
       
@@ -1010,6 +1213,8 @@
       treeWrap.classList.remove('level-up');
       void treeWrap.offsetWidth; 
       treeWrap.classList.add('level-up');
+
+      burstTreeParticles();
 
       let message = '';
       if (state.session === 1) {
@@ -1031,29 +1236,6 @@
       setTimeout(() => showModal(message), 600);
     }
 
-    function handleMbtiClick(event) {
-      const btn = event.currentTarget;
-      const row = btn.closest('.mbti-row');
-      const group = row.dataset.group;
-      
-      row.querySelectorAll('.mbti-btn').forEach(node => node.classList.remove('selected'));
-      btn.classList.add('selected');
-      state.mbtiSelections[group] = btn.dataset.type;
-      
-      updateMbtiNextButton();
-    }
-
-    function handleEmotionClick(event) {
-      const btn = event.currentTarget;
-      document.querySelectorAll('.emotion-btn').forEach(node => node.classList.remove('selected'));
-      btn.classList.add('selected');
-      state.selectedEmotion = btn.dataset.emo;
-      
-      updateRecordButton();
-      updateWeatherConfirmButton();
-    }
-
-    // 🔥 팝업 핸들 스와이프 기능 (아래로 드래그 시 닫기) 🔥
     function setupSwipeToClose(sheetElement, closeCallback) {
       let startY = 0;
       let currentY = 0;
@@ -1063,14 +1245,14 @@
       handleWrap.addEventListener('touchstart', (e) => {
         startY = e.touches[0].clientY;
         isDragging = true;
-        sheetElement.style.transition = 'none'; // 드래그 중엔 애니메이션 제거
+        sheetElement.style.transition = 'none'; 
       }, {passive: true});
 
       handleWrap.addEventListener('touchmove', (e) => {
         if (!isDragging) return;
         currentY = e.touches[0].clientY;
         const diff = currentY - startY;
-        if (diff > 0) { // 아래로 내릴 때만 움직임
+        if (diff > 0) { 
           sheetElement.style.transform = `translateY(${diff}px)`;
         }
       }, {passive: true});
@@ -1078,11 +1260,11 @@
       handleWrap.addEventListener('touchend', () => {
         if (!isDragging) return;
         isDragging = false;
-        sheetElement.style.transition = ''; // 트랜지션 복구
-        sheetElement.style.transform = ''; // 원래 CSS 상태로 복구
+        sheetElement.style.transition = ''; 
+        sheetElement.style.transform = ''; 
 
         const diff = currentY - startY;
-        if (diff > 80) { // 일정 기준치 이상 드래그 시 창 닫기
+        if (diff > 80) { 
           closeCallback();
         }
       });
@@ -1124,7 +1306,6 @@
       
       el.recordBackdrop.addEventListener('click', () => { closeRecordSheet(); closeWeatherSheet(); });
       
-      // 스와이프 기능 세팅
       setupSwipeToClose(screens.record, closeRecordSheet);
       setupSwipeToClose(screens.weather, closeWeatherSheet);
       
