@@ -627,7 +627,6 @@
       "당신의 솔직한 기록이 단단한 뿌리가 됩니다"
     ];
 
-    // 🔥 삭제되었던 resetBtn을 다시 올바르게 추가하여 에러 방지 🔥
     const el = {
       introStartBtn: document.getElementById('introStartBtn'),
       loadTreeInput: document.getElementById('loadTreeInput'),
@@ -645,7 +644,7 @@
       recordBackdrop: document.getElementById('recordBackdrop'),
       waterBtn: document.getElementById('waterBtn'),
       helpBtn: document.getElementById('helpBtn'),
-      resetBtn: document.getElementById('resetBtn'), // <- 복구 완료
+      resetBtn: document.getElementById('resetBtn'), 
       modalConfirmBtn: document.getElementById('modalConfirmBtn'),
       modalOverlay: document.getElementById('modalOverlay'),
       modalText: document.getElementById('modalText'),
@@ -695,13 +694,28 @@
       return rgbToHex(r * (1 - amount / 100), g * (1 - amount / 100), b * (1 - amount / 100));
     }
 
-    function getTreeMetrics() {
-      const growth = Math.max(0, Math.min(1, state.session / state.maxSession));
+    // 🔥 핵심 성과 로직 수정: 회차(session)에 맞춰 기둥 두께, 잎사귀 밀도 등 극적인 스케일업 구현
+    function getTreeMetrics(session) {
+      const growth = Math.max(0, Math.min(1, session / state.maxSession));
+      let trunkScale = 0;
+      let canopyScale = 0;
+      let leafDensity = 0;
+
+      if (session >= 3) {
+        const treeGrowth = (session - 3) / 5; // 3회차=0.0, 5회차=0.4, 8회차=1.0
+        trunkScale = 0.35 + treeGrowth * 0.65; // 기둥 스케일 점점 굵어짐
+        canopyScale = 0.4 + treeGrowth * 0.6;  // 캐노피(이파리 영역) 확대
+        
+        if (session === 3) leafDensity = 15;
+        else if (session === 4) leafDensity = 30;
+        else leafDensity = 60 + (session - 5) * 30; // 5회차부터 무성하게 (60 -> 150)
+      }
+
       return {
         growth,
-        trunkScale: 0.72 + growth * 0.34,
-        canopyScale: 0.58 + growth * 0.52,
-        leafDensity: 6 + Math.round(growth * 18),
+        trunkScale,
+        canopyScale,
+        leafDensity,
         glowStrength: 0.08 + growth * 0.22
       };
     }
@@ -716,17 +730,42 @@
       `;
     }
 
-    function buildLeafCluster({ count, radiusX, radiusY, color, opacity, yOffset = 0 }) {
+    // 🔥 MBTI 형태별 군집 로직: 원뿔형(cone), 둥근형(round), 부드러운형(soft), 넓게 퍼진형(wide)
+    function buildLeafCluster({ count, radiusX, radiusY, color, opacity, yOffset = 0, silhouette }) {
       if(count <= 0) return "";
       const leaves = [];
       for (let i = 0; i < count; i++) {
-        const angle = (Math.PI * 2 * i) / count;
-        const jitterX = Math.sin(i * 1.7) * 10;
-        const jitterY = Math.cos(i * 1.3) * 8;
-        const x = 160 + Math.cos(angle) * radiusX * (0.55 + (i % 3) * 0.12) + jitterX;
-        const y = 165 + Math.sin(angle) * radiusY * (0.45 + (i % 4) * 0.1) + jitterY + yOffset;
-        const rx = 18 + (i % 4) * 4;
-        const ry = 14 + (i % 3) * 4;
+        const r1 = (Math.sin(i * 12.9898) * 43758.5453) % 1;
+        const r2 = (Math.sin(i * 78.233) * 43758.5453) % 1;
+        const pseudoRand1 = Math.abs(r1);
+        const pseudoRand2 = Math.abs(r2);
+
+        let angle, x, y;
+        
+        if (silhouette === 'cone') {
+          const h = pseudoRand1;
+          const w = (pseudoRand2 - 0.5) * 2 * Math.max(0.2, h); 
+          x = 160 + w * radiusX * 1.2;
+          y = 80 + h * radiusY * 2.2 + yOffset; 
+        } else if (silhouette === 'wide') {
+          angle = pseudoRand2 * Math.PI * 2;
+          const rDist = Math.sqrt(pseudoRand1);
+          x = 160 + Math.cos(angle) * radiusX * 1.5 * rDist;
+          y = 150 + Math.sin(angle) * radiusY * 0.6 * rDist + yOffset;
+        } else if (silhouette === 'soft') {
+          angle = pseudoRand2 * Math.PI * 2;
+          const rDist = Math.sqrt(pseudoRand1);
+          x = 160 + Math.cos(angle) * radiusX * 1.1 * rDist;
+          y = 145 + Math.sin(angle) * radiusY * 0.9 * rDist + yOffset;
+        } else {
+          angle = pseudoRand2 * Math.PI * 2;
+          const rDist = Math.sqrt(pseudoRand1);
+          x = 160 + Math.cos(angle) * radiusX * rDist;
+          y = 155 + Math.sin(angle) * radiusY * rDist + yOffset;
+        }
+
+        const rx = 16 + (i % 5) * 4;
+        const ry = 12 + (i % 4) * 4;
         leaves.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" fill="${color}" opacity="${opacity}" />`);
       }
       return leaves.join("");
@@ -734,11 +773,13 @@
 
     function buildBloomCluster(metrics, mood) {
       if (metrics.growth < 1) return "";
-      const count = Math.max(4, Math.round(metrics.leafDensity * 0.35));
+      const count = Math.max(4, Math.round(metrics.leafDensity * 0.2));
       const nodes = [];
       for (let i = 0; i < count; i++) {
-        const x = 90 + (i * 17) % 140;
-        const y = 90 + (i * 29) % 120;
+        const r1 = (Math.sin(i * 11.11) * 43758.54) % 1;
+        const r2 = (Math.sin(i * 22.22) * 43758.54) % 1;
+        const x = 160 + (Math.abs(r1) - 0.5) * 160 * metrics.canopyScale;
+        const y = 140 + (Math.abs(r2) - 0.5) * 120 * metrics.canopyScale;
         nodes.push(`
           <g transform="translate(${x} ${y}) scale(${0.7 + (i % 3) * 0.15})">
             <circle cx="0" cy="0" r="6" fill="#ffd9eb" opacity="0.95"/>
@@ -751,19 +792,23 @@
     }
 
     function buildParticleLayer(metrics, mood) {
+      if (metrics.growth === 0) return "";
       const count = Math.round(6 + metrics.glowStrength * 18);
       let out = "";
       for (let i = 0; i < count; i++) {
-        const x = 100 + (i * 21) % 120;
-        const y = 90 + (i * 19) % 150;
+        const r1 = (Math.sin(i * 33.33) * 43758.54) % 1;
+        const r2 = (Math.sin(i * 44.44) * 43758.54) % 1;
+        const x = 160 + (Math.abs(r1) - 0.5) * 200;
+        const y = 180 + (Math.abs(r2) - 0.5) * 180;
         const r = 1.8 + (i % 3);
         out += `<circle cx="${x}" cy="${y}" r="${r}" fill="${mood.glow}" opacity="${0.35 + (i % 4) * 0.12}" />`;
       }
       return out;
     }
 
-    function buildTreeSVG({ styleKey, visual, mood, metrics }) {
-      if (metrics.growth === 0) {
+    // 🔥 단계별(0~2회차) 커스텀 렌더링 구현 및 이후 자연스러운 전환 로직 
+    function buildTreeSVG({ styleKey, visual, mood, metrics, session }) {
+      if (session === 0) {
         return `
           <svg viewBox="0 0 320 420" class="tree-svg tree-svg--${styleKey}" aria-hidden="true">
             <ellipse cx="160" cy="330" rx="40" ry="12" fill="${darken(visual.trunk, 10)}" opacity="0.8"/>
@@ -772,8 +817,36 @@
         `;
       }
 
-      const leavesBack = buildLeafCluster({ count: Math.round(metrics.leafDensity * 0.7), radiusX: 92 * metrics.canopyScale, radiusY: 72 * metrics.canopyScale, color: visual.leafDark, opacity: 0.72, yOffset: -8 });
-      const leavesFront = buildLeafCluster({ count: metrics.leafDensity, radiusX: 110 * metrics.canopyScale, radiusY: 88 * metrics.canopyScale, color: visual.leaf, opacity: 0.96, yOffset: 8 });
+      if (session === 1) {
+        return `
+          <svg viewBox="0 0 320 420" class="tree-svg tree-svg--${styleKey}" aria-hidden="true">
+            <ellipse cx="160" cy="330" rx="40" ry="12" fill="${darken(visual.trunk, 10)}" opacity="0.8"/>
+            <path d="M160 330 Q155 300 160 280" fill="none" stroke="${visual.leafDark}" stroke-width="6" stroke-linecap="round"/>
+            <path d="M160 280 Q140 270 145 250 Q160 260 160 280" fill="${visual.leaf}"/>
+            <path d="M160 285 Q180 275 175 255 Q160 265 160 285" fill="${visual.accent}"/>
+          </svg>
+        `;
+      }
+
+      if (session === 2) {
+        return `
+          <svg viewBox="0 0 320 420" class="tree-svg tree-svg--${styleKey}" aria-hidden="true">
+            <ellipse cx="160" cy="330" rx="45" ry="14" fill="${darken(visual.trunk, 10)}" opacity="0.8"/>
+            <path d="M150 330 Q140 290 145 260" fill="none" stroke="${visual.leafDark}" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="135" cy="255" rx="12" ry="6" fill="${visual.leaf}" transform="rotate(-30 135 255)"/>
+            <ellipse cx="155" cy="250" rx="10" ry="5" fill="${visual.accent}" transform="rotate(20 155 250)"/>
+            <path d="M165 330 Q170 280 165 240" fill="none" stroke="${visual.leafDark}" stroke-width="6" stroke-linecap="round"/>
+            <ellipse cx="150" cy="235" rx="14" ry="7" fill="${visual.leaf}" transform="rotate(-20 150 235)"/>
+            <ellipse cx="180" cy="230" rx="12" ry="6" fill="${visual.accent}" transform="rotate(30 180 230)"/>
+            <path d="M175 330 Q190 300 185 270" fill="none" stroke="${visual.leafDark}" stroke-width="4" stroke-linecap="round"/>
+            <ellipse cx="175" cy="265" rx="10" ry="5" fill="${visual.leaf}" transform="rotate(-40 175 265)"/>
+            <ellipse cx="195" cy="260" rx="9" ry="4" fill="${visual.accent}" transform="rotate(40 195 260)"/>
+          </svg>
+        `;
+      }
+
+      const leavesBack = buildLeafCluster({ count: Math.round(metrics.leafDensity * 0.7), radiusX: 92 * metrics.canopyScale, radiusY: 72 * metrics.canopyScale, color: visual.leafDark, opacity: 0.72, yOffset: -8, silhouette: visual.silhouette });
+      const leavesFront = buildLeafCluster({ count: metrics.leafDensity, radiusX: 110 * metrics.canopyScale, radiusY: 88 * metrics.canopyScale, color: visual.leaf, opacity: 0.96, yOffset: 8, silhouette: visual.silhouette });
       const blossoms = visual.bloom ? buildBloomCluster(metrics, mood) : "";
 
       return `
@@ -994,9 +1067,10 @@
       const styleKey = treeDataMap[state.mbti]?.style || "oak";
       const visual = treeVisualMap[styleKey] || treeVisualMap.oak;
       const mood = emotionTreeTone[state.selectedEmotion || "default"];
-      const metrics = getTreeMetrics();
+      const displaySession = Math.min(state.session, state.maxSession);
+      const metrics = getTreeMetrics(displaySession);
 
-      el.treeArt.innerHTML = buildTreeSVG({ styleKey, visual, mood, metrics });
+      el.treeArt.innerHTML = buildTreeSVG({ styleKey, visual, mood, metrics, session: displaySession });
 
       const treeWrap = document.querySelector(".tree-wrap");
       if (treeWrap) {
@@ -1153,8 +1227,8 @@
       burstTreeParticles();
 
       let message = '';
-      if (state.session === 1) message = '첫 마음을 기록했네요!<br>작은 씨앗이 새싹을 틔웠어요.';
-      else if (state.session === 2) message = '어린 잎사귀가 돋아나며<br>점점 나무의 형태를 갖춰가요.';
+      if (state.session === 1) message = '첫 마음을 기록했네요!<br>작은 씨앗이 여린 새싹을 틔웠어요.';
+      else if (state.session === 2) message = '작은 새싹들이 여럿 모여<br>더욱 싱그러운 나물이 되었네요.';
       else if (state.session === 4) message = '나무가 절반이나 자랐어요!<br>당신의 마음도 그만큼 단단해졌을 거예요.';
       else if (state.session === 6) message = '잎이 무성해지며 시원한 그늘을<br>만들어주고 있어요.';
       else if (state.session === 8) message = '정성스러운 8번의 기록이 마침내<br>아름다운 결실을 맺었습니다. 수고하셨어요!';
