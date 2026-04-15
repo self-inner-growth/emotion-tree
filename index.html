@@ -203,28 +203,24 @@
     .ground-track { position:absolute; left:-8%; right:-8%; bottom:0; height:23%; z-index:4; background: linear-gradient(180deg, #86d084 0%, #79c17b 38%, #4e9f63 100%); border-radius: 42% 42% 0 0 / 16% 16% 0 0; }
     .track-lines { position:absolute; left:50%; bottom:6%; width:72%; height:14%; transform:translateX(-50%); z-index:5; opacity:0.34; background: linear-gradient(90deg, transparent 0 10%, rgba(255,255,255,0.55) 10% 13%, transparent 13% 25%, rgba(255,255,255,0.55) 25% 28%, transparent 28% 40%, rgba(255,255,255,0.55) 40% 43%, transparent 43% 55%, rgba(255,255,255,0.55) 55% 58%, transparent 58% 70%, rgba(255,255,255,0.55) 70% 73%, transparent 73% 100%); clip-path: polygon(12% 100%, 36% 16%, 64% 16%, 88% 100%); }
     
-    /* 🔥 나무 크기 및 캔버스 대폭 확대 🔥 */
     .tree-stage { position:absolute; inset:0; z-index:6; display:grid; place-items:end center; padding-bottom:110px; perspective: 1000px; }
     
     @keyframes treeSway {
       0%, 100% { transform: rotate(-1.5deg); }
       50% { transform: rotate(1.5deg); }
     }
-    /* 폭발적 레벨업 애니메이션 (키우는 맛 극대화) */
     @keyframes levelUpPulse {
       0% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
       40% { transform: scale(1.08); filter: brightness(1.3) drop-shadow(0 0 30px rgba(255,215,0,0.8)); }
       100% { transform: scale(1); filter: brightness(1) drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); }
     }
     
-    /* 캔버스 너비를 더 키워 웅장하게 */
     .tree-wrap { position:relative; width:min(88vw, 380px); aspect-ratio:1 / 1.25; transform-origin: center bottom; animation: treeSway 6s ease-in-out infinite; filter: drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); transition: transform 0.5s ease; }
     .tree-wrap.level-up { animation: levelUpPulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     
     .tree-shadow { position:absolute; bottom:2px; left:50%; width:60%; height:10%; transform:translateX(-50%); background: radial-gradient(ellipse at center, rgba(38, 92, 45, 0.4) 0%, rgba(38, 92, 45, 0.1) 55%, transparent 72%); filter: blur(6px); transition: all 1s ease; }
     .tree-svg { width:100%; height:100%; display:block; overflow: visible; }
     
-    /* SVG 내부 파티클 애니메이션 */
     @keyframes petalFall {
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(30px, 150px) rotate(360deg); opacity: 0; }
@@ -335,6 +331,7 @@
     .bottom-row { display: flex; flex-direction:column; align-items:stretch; margin-top: auto; }
     .bottom-panel { pointer-events:auto; display:grid; gap:12px; margin-bottom:12px; }
     
+    /* 기본 버튼 디자인 */
     .primary-action { width:100%; height: auto; display:flex; align-items:center; justify-content:space-between; gap:12px; background: linear-gradient(180deg, rgba(125, 222, 145, 0.8) 0%, rgba(69, 179, 107, 0.85) 100%); color:white; border-radius:24px; padding:16px 20px; box-shadow: 0 16px 30px rgba(69,179,107,0.25); text-align: left; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s; }
     .primary-action:active { transform: scale(0.97); }
     .primary-action strong { display:block; font-size:16px; margin-bottom: 2px; }
@@ -342,6 +339,21 @@
     .action-icon { width:46px; height:46px; border-radius:16px; background: rgba(255,255,255,0.25); display:grid; place-items:center; flex-shrink:0; color: white; border: 1px solid rgba(255,255,255,0.2); }
     .action-icon svg { width: 24px; height: 24px; fill: currentColor; }
     
+    /* 🔥 완성되었을 때 비활성화된 버튼 디자인 🔥 */
+    .primary-action.completed {
+      background: rgba(255,255,255,0.6);
+      color: var(--color-text);
+      box-shadow: none;
+      cursor: default;
+    }
+    .primary-action.completed:active { transform: scale(1); }
+    .primary-action.completed .action-sub {
+      color: var(--color-text-muted);
+    }
+    .primary-action.completed .action-icon {
+      display: none;
+    }
+
     .bottom-tabs { display:grid; grid-template-columns:1fr; padding: 0 16px; margin-top: -4px; margin-bottom: 8px;}
     .record-tab-btn { background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(8px); padding: 14px; border-radius: 20px; font-weight: 600; color: var(--color-text); text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-sm); pointer-events: auto;}
     
@@ -397,13 +409,21 @@
     .sheet-inner { height:100%; display:flex; flex-direction:column; gap:18px; }
     .emotion-grid { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
     
+    /* 🔥 수정 포인트: 감정별 맞춤 색상 표시 🔥 */
     .emotion-btn { 
       background: rgba(255,255,255,0.7); padding:12px 16px; border-radius:999px; font-size:14px; 
       color: var(--color-text-muted); border:1px solid rgba(255,255,255,0.5);
       display: flex; align-items: center; gap: 6px; height: auto; backdrop-filter: blur(8px);
+      transition: all 0.2s;
     }
     .emotion-btn svg { width: 18px; height: 18px; }
-    .emotion-btn.selected { background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%); border-color: rgba(69,179,107,0.5); color: var(--color-primary); font-weight:700; box-shadow: 0 4px 12px rgba(69,179,107,0.15);}
+    
+    .emotion-btn.selected { font-weight:700; }
+    .emotion-btn.selected[data-emo="joy"] { background: linear-gradient(180deg, #fff0c7 0%, #ffe082 100%); border-color: #f3c22b; color: #d35400; box-shadow: 0 4px 12px rgba(243,194,43,0.25); }
+    .emotion-btn.selected[data-emo="sadness"] { background: linear-gradient(180deg, #e3ebf3 0%, #c4d4e3 100%); border-color: #92adc6; color: #2c3e50; box-shadow: 0 4px 12px rgba(146,173,198,0.25); }
+    .emotion-btn.selected[data-emo="anger"] { background: linear-gradient(180deg, #e4f1ef 0%, #c3deda 100%); border-color: #8bbab3; color: #1e4a44; box-shadow: 0 4px 12px rgba(139,186,179,0.25); }
+    .emotion-btn.selected[data-emo="excitement"] { background: linear-gradient(180deg, #fbe8ff 0%, #efc4ff 100%); border-color: #d794f3; color: #7a42a1; box-shadow: 0 4px 12px rgba(215,148,243,0.25); }
+    .emotion-btn.selected[data-emo="fatigue"] { background: linear-gradient(180deg, #f6e6dc 0%, #ecc4ad 100%); border-color: #d19a79; color: #8a5a33; box-shadow: 0 4px 12px rgba(209,154,121,0.25); }
     
     .field-title { text-align:center; }
     .field-title h3 { font-size:18px; margin-bottom:8px; }
@@ -415,33 +435,10 @@
     .modal-overlay.active { opacity:1; pointer-events:auto; }
     .modal-card { width:min(100%, 340px); background: rgba(255,255,255,0.96); border-radius:28px; padding:28px 20px; text-align:center; box-shadow: var(--shadow-lg); }
     .modal-card p { margin-bottom:18px; color: var(--color-text); font-size:16px; word-break: keep-all; }
-    #screen-ending { background: linear-gradient(180deg, #f9f4ff 0%, #eaf8ff 100%); display:flex; flex-direction:column; padding:28px 24px 22px; }
-    .ending-visual { position:relative; margin:auto 0 20px; min-height:360px; display:grid; place-items:center; background: radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.25) 46%, transparent 70%); border-radius:32px; overflow:hidden; }
-    .ending-copy { text-align:center; margin-bottom:18px; }
-    .ending-copy h2 { font-size:28px; margin-bottom:14px; }
+    
     .toast { position:absolute; left:50%; bottom:122px; transform:translateX(-50%) translateY(10px); z-index:35; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); color: var(--color-text); padding:11px 16px; border-radius:999px; box-shadow: var(--shadow-sm); font-size:12px; opacity:0; pointer-events:none; transition: opacity 220ms ease, transform 220ms ease; max-width: calc(100% - 40px); text-align:center; word-break: keep-all; border: 1px solid rgba(255,255,255,0.5); }
     .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-    @keyframes rainFall {
-      0% { transform: translateY(-20px) scaleY(1); opacity: 0; }
-      20% { opacity: 0.8; }
-      80% { opacity: 0.8; }
-      100% { transform: translateY(100vh) scaleY(1.5); opacity: 0; }
-    }
-    @keyframes windBlow {
-      0% { transform: translateX(100vw) rotate(-15deg); opacity: 0; }
-      10% { opacity: 0.6; }
-      90% { opacity: 0.6; }
-      100% { transform: translateX(-30vw) rotate(-15deg); opacity: 0; }
-    }
-    @keyframes starTwinkle {
-      0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
-      50% { opacity: 1; transform: scale(1.3) rotate(45deg); box-shadow: 0 0 20px rgba(255, 240, 180, 0.9), 0 0 40px rgba(255, 255, 255, 0.6); }
-    }
-    .css-star {
-      position: absolute; width: 10px; height: 10px; background: #fff;
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-    }
   </style>
 </head>
 <body>
@@ -570,10 +567,10 @@
           <div class="bottom-panel">
             <button type="button" class="primary-action" id="openRecordBtn">
               <div>
-                <strong>오늘의 마음 기록하기</strong>
-                <div class="action-sub">날씨를 먼저 고르고, 마음 기록을 남겨 물을 주세요</div>
+                <strong id="recordBtnTitle">오늘의 마음 기록하기</strong>
+                <div class="action-sub" id="recordBtnSub">날씨를 먼저 고르고, 마음 기록을 남겨 물을 주세요</div>
               </div>
-              <div class="action-icon">
+              <div class="action-icon" id="recordBtnIcon">
                 <svg viewBox="0 0 24 24"><path d="M12 21c-3.3 0-6-2.7-6-6 0-4 6-11 6-11s6 7 6 11c0 3.3-2.7 6-6 6z"/></svg>
               </div>
             </button>
@@ -661,15 +658,6 @@
       </div>
     </section>
 
-    <section id="screen-ending" class="screen">
-      <div class="ending-visual" id="endingVisual"></div>
-      <div class="ending-copy">
-        <h2>수고하셨어요!<br>마침내 아름다운 결실을 맺었습니다.</h2>
-        <p>꾸준히 마음을 돌본 시간들이 모여 나무가 활짝 피어났어요.</p>
-      </div>
-      <button type="button" class="btn-primary" id="restartBtn">처음부터 다시하기</button>
-    </section>
-
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal-card">
         <p id="modalText">메시지</p>
@@ -730,6 +718,8 @@
       nameNextBtn: document.getElementById('nameNextBtn'),
       treeNameInput: document.getElementById('treeNameInput'),
       openRecordBtn: document.getElementById('openRecordBtn'),
+      recordBtnTitle: document.getElementById('recordBtnTitle'),
+      recordBtnSub: document.getElementById('recordBtnSub'),
       closeRecordBtn: document.getElementById('closeRecordBtn'),
       weatherOpenBtn: document.getElementById('weatherOpenBtn'),
       weatherConfirmBtn: document.getElementById('weatherConfirmBtn'),
@@ -738,7 +728,7 @@
       waterBtn: document.getElementById('waterBtn'),
       helpBtn: document.getElementById('helpBtn'),
       resetBtn: document.getElementById('resetBtn'),
-      restartBtn: document.getElementById('restartBtn'),
+      restartBtn: document.getElementById('restartBtn'), // No longer used, but kept for compatibility
       modalConfirmBtn: document.getElementById('modalConfirmBtn'),
       modalOverlay: document.getElementById('modalOverlay'),
       modalText: document.getElementById('modalText'),
@@ -760,7 +750,6 @@
       uiTreeName: document.getElementById('uiTreeName'),
       uiSession: document.getElementById('uiSession'),
       avatarIcon: document.getElementById('avatarIcon'),
-      endingVisual: document.getElementById('endingVisual'),
       mainScene: document.getElementById('mainScene'),
       openHistoryBtn: document.getElementById('openHistoryBtn'),
       closeHistoryBtn: document.getElementById('closeHistoryBtn'),
@@ -774,8 +763,7 @@
       main: document.getElementById('screen-main'),
       record: document.getElementById('screen-record'),
       weather: document.getElementById('screen-weather'),
-      history: document.getElementById('screen-history'),
-      ending: document.getElementById('screen-ending')
+      history: document.getElementById('screen-history')
     };
 
     async function fetchHistory(treeName) {
@@ -822,14 +810,14 @@
 
         const journalCount = history.filter(item => item.type === '마음 기록').length;
         state.session = journalCount;
-        state.level = state.session; // 0부터 8까지 매핑
+        state.level = state.session; // 0부터 8까지 그대로 레벨에 매핑
 
         updateMainUI();
+        showScreen(screens.main);
         
         if (state.session >= state.maxSession) {
-          showEnding();
+          showToast(`'${treeName}' 나무가 모두 자랐네요! 🌿`);
         } else {
-          showScreen(screens.main);
           showToast(`'${treeName}' 나무를 불러왔어요! 🌿`);
         }
       } else {
@@ -935,9 +923,6 @@
 
     function closeModal() {
       el.modalOverlay.classList.remove('active');
-      if (state.session >= state.maxSession) {
-        setTimeout(showEnding, 200);
-      }
     }
 
     function getProgressPercent() {
@@ -967,25 +952,22 @@
       el.weatherConfirmBtn.disabled = !state.selectedEmotion;
     }
 
-    // 🌟 8단계 고퀄리티 일러스트 나무 렌더링 🌟
     function treeSVG(style, level) {
       const palettes = {
-        baobab: ['#8ea667','#5ab56a','#37764e', '#a0856b', '#7c6451'], // 잎, 잎, 잎, 줄기, 줄기그림자
+        baobab: ['#8ea667','#5ab56a','#37764e', '#a0856b', '#7c6451'], 
         meta: ['#8ae07d','#4ab264','#2f7f4a', '#8a5a33', '#5f412c'], 
-        birch: ['#c8f3ab','#9cda7d','#73b35a', '#f5f7fa', '#dcdfe6'], // 흰색 기둥
-        blossom: ['#ffb7d5','#ff9ebf','#e8789d', '#5a423b', '#422f29'], // 핑크 잎, 어두운 가지
-        pine: ['#4a7c59','#2f5c3e','#1b4028', '#6b4f3b', '#4a3324'], // 솔잎, 거친 기둥
+        birch: ['#c8f3ab','#9cda7d','#73b35a', '#f5f7fa', '#dcdfe6'], 
+        blossom: ['#ffb7d5','#ff9ebf','#e8789d', '#5a423b', '#422f29'], 
+        pine: ['#4a7c59','#2f5c3e','#1b4028', '#6b4f3b', '#4a3324'], 
         oak: ['#82db81','#48a85e','#2d7349', '#8a5a33', '#5f412c'], 
-        palm: ['#7bc05b','#509944','#2b6e26', '#b08b5c', '#8a653b'], // 얇은 줄기
-        maple: ['#ff6b6b','#e64c3c','#c0392b', '#6b4b3a', '#4a3022'] // 붉은 잎
+        palm: ['#7bc05b','#509944','#2b6e26', '#b08b5c', '#8a653b'], 
+        maple: ['#ff6b6b','#e64c3c','#c0392b', '#6b4b3a', '#4a3022'] 
       };
       const [c1, c2, c3, t1, t2] = palettes[style] || palettes.oak;
       
-      // 성장 스케일 (0 ~ 8단계에 맞춰 0.3 부터 1.3배까지 폭풍 성장)
       let s = level === 0 ? 0.2 : 0.3 + (level * 0.125); 
-      // y축 베이스(바닥)
       const base = 310;
-      let th = 260 * s; // 최대 기둥 높이 260까지 시원하게 뻗음
+      let th = 260 * s; 
 
       let content = '';
 
@@ -1003,20 +985,16 @@
         return wrapSVG(content);
       }
 
-      // === 여기서부터 레벨 2 ~ 8 각 나무별 커스텀 형태 적용 ===
       let trunk = '';
       let crown = '';
       let extras = '';
 
       if (style === 'baobab') {
-        // 굵고 단단한 바오밥
-        let w = 45 * s; // 기둥 두께
+        let w = 45 * s; 
         trunk = `<path d="M ${148 - w} ${base} C ${148 - w*0.8} ${base - th*0.5}, ${148 - w*0.4} ${base - th*0.8}, ${148 - w*0.5} ${base - th} 
                        L ${148 + w*0.5} ${base - th} C ${148 + w*0.4} ${base - th*0.8}, ${148 + w*0.8} ${base - th*0.5}, ${148 + w} ${base} Z" fill="${t1}"/>`;
-        // 줄기 디테일
         if(level >= 4) trunk += `<path d="M ${148-w*0.3} ${base} Q ${148-w*0.1} ${base-th*0.5} ${148-w*0.2} ${base-th*0.9}" stroke="${t2}" stroke-width="${3*s}" fill="none"/>
                                  <path d="M ${148+w*0.3} ${base} Q ${148+w*0.1} ${base-th*0.5} ${148+w*0.2} ${base-th*0.9}" stroke="${t2}" stroke-width="${2*s}" fill="none"/>`;
-        // 위로 넓게 퍼지는 잎
         crown = `<ellipse cx="148" cy="${base - th}" rx="${60*s}" ry="${20*s}" fill="${c2}"/>`;
         if(level >= 3) crown += `<ellipse cx="${148 - 40*s}" cy="${base - th - 10*s}" rx="${45*s}" ry="${15*s}" fill="${c3}"/>
                                  <ellipse cx="${148 + 40*s}" cy="${base - th - 10*s}" rx="${45*s}" ry="${15*s}" fill="${c1}"/>`;
@@ -1027,100 +1005,97 @@
         }
       } 
       else if (style === 'meta') {
-        // 곧고 뾰족한 메타세쿼이아
-        trunk = `<path d="M ${148 - 12*s} ${base} L 148 ${base - th} L ${148 + 12*s} ${base} Z" fill="${t1}"/>`;
-        // 층층이 쌓이는 뾰족한 잎
-        if(level >= 2) crown += `<polygon points="148,${base-th-30*s} ${148-40*s},${base-th+50*s} ${148+40*s},${base-th+50*s}" fill="${c1}"/>`;
-        if(level >= 4) crown += `<polygon points="148,${base-th+20*s} ${148-55*s},${base-th+120*s} ${148+55*s},${base-th+120*s}" fill="${c2}"/>`;
-        if(level >= 6) crown += `<polygon points="148,${base-th+80*s} ${148-70*s},${base-th+190*s} ${148+70*s},${base-th+190*s}" fill="${c3}"/>`;
+        let th_val = 240 * s;
+        trunk = `<path d="M ${148 - 12*s} ${base} L 148 ${base - th_val} L ${148 + 12*s} ${base} Z" fill="${t1}"/>`;
+        if(level >= 2) crown += `<polygon points="148,${base-th_val-30*s} ${148-40*s},${base-th_val+50*s} ${148+40*s},${base-th_val+50*s}" fill="${c1}"/>`;
+        if(level >= 4) crown += `<polygon points="148,${base-th_val+20*s} ${148-55*s},${base-th_val+120*s} ${148+55*s},${base-th_val+120*s}" fill="${c2}"/>`;
+        if(level >= 6) crown += `<polygon points="148,${base-th_val+80*s} ${148-70*s},${base-th_val+190*s} ${148+70*s},${base-th_val+190*s}" fill="${c3}"/>`;
         if(level === 8) {
-          extras = `<circle cx="148" cy="${base - th}" r="5" fill="#f1c40f"/>
-                    <circle cx="${148-20*s}" cy="${base - th + 60*s}" r="4" fill="#f1c40f"/>
-                    <circle cx="${148+30*s}" cy="${base - th + 110*s}" r="5" fill="#f1c40f"/>`;
+          extras = `<circle cx="148" cy="${base - th_val}" r="5" fill="#f1c40f"/>
+                    <circle cx="${148-20*s}" cy="${base - th_val + 60*s}" r="4" fill="#f1c40f"/>
+                    <circle cx="${148+30*s}" cy="${base - th_val + 110*s}" r="5" fill="#f1c40f"/>`;
         }
       } 
       else if (style === 'birch') {
-        // 자작나무 (흰 기둥, 검은 무늬, 다이아몬드 잎)
-        trunk = `<path d="M ${148 - 10*s} ${base} Q 148 ${base-th*0.5} ${148 - 3*s} ${base - th} L ${148 + 3*s} ${base - th} Q 148 ${base-th*0.5} ${148 + 10*s} ${base} Z" fill="${t1}"/>`;
+        let th_val = 220 * s;
+        trunk = `<path d="M ${148 - 10*s} ${base} Q 148 ${base-th_val*0.5} ${148 - 3*s} ${base - th_val} L ${148 + 3*s} ${base - th_val} Q 148 ${base-th_val*0.5} ${148 + 10*s} ${base} Z" fill="${t1}"/>`;
         if(level >= 3) {
           for(let i=1; i<=6; i++) {
-            trunk += `<path d="M ${148 - 6*s} ${base - th*(i/7)} Q 148 ${base - th*(i/7) + 5*s} ${148 + 6*s} ${base - th*(i/7) - 3*s}" stroke="${t2}" stroke-width="${2*s}" fill="none"/>`;
+            trunk += `<path d="M ${148 - 6*s} ${base - th_val*(i/7)} Q 148 ${base - th_val*(i/7) + 5*s} ${148 + 6*s} ${base - th_val*(i/7) - 3*s}" stroke="${t2}" stroke-width="${2*s}" fill="none"/>`;
           }
         }
-        crown = `<circle cx="148" cy="${base - th}" r="${30*s}" fill="${c1}"/>`;
+        crown = `<circle cx="148" cy="${base - th_val}" r="${30*s}" fill="${c1}"/>`;
         if(level >= 4) {
-          crown += `<polygon points="148,${base-th-40*s} ${148-30*s},${base-th} 148,${base-th+20*s} ${148+30*s},${base-th}" fill="${c2}"/>`;
-          crown += `<polygon points="${148-20*s},${base-th-20*s} ${148-60*s},${base-th+20*s} ${148-20*s},${base-th+40*s} 148,${base-th+20*s}" fill="${c3}"/>`;
-          crown += `<polygon points="${148+20*s},${base-th-20*s} 148,${base-th+20*s} ${148+20*s},${base-th+40*s} ${148+60*s},${base-th+20*s}" fill="${c1}"/>`;
+          crown += `<polygon points="148,${base-th_val-40*s} ${148-30*s},${base-th_val} 148,${base-th_val+20*s} ${148+30*s},${base-th_val}" fill="${c2}"/>`;
+          crown += `<polygon points="${148-20*s},${base-th_val-20*s} ${148-60*s},${base-th_val+20*s} ${148-20*s},${base-th_val+40*s} 148,${base-th_val+20*s}" fill="${c3}"/>`;
+          crown += `<polygon points="${148+20*s},${base-th_val-20*s} 148,${base-th_val+20*s} ${148+20*s},${base-th_val+40*s} ${148+60*s},${base-th_val+20*s}" fill="${c1}"/>`;
         }
         if(level >= 6) {
-          crown += `<polygon points="148,${base-th-70*s} ${148-40*s},${base-th-20*s} 148,${base-th+10*s} ${148+40*s},${base-th-20*s}" fill="${c1}"/>`;
+          crown += `<polygon points="148,${base-th_val-70*s} ${148-40*s},${base-th_val-20*s} 148,${base-th_val+10*s} ${148+40*s},${base-th_val-20*s}" fill="${c1}"/>`;
         }
         if(level === 8) {
            extras = `<g class="animate-petal">
-                       <circle cx="${148-40*s}" cy="${base-th}" r="3" fill="#fff"/>
-                       <circle cx="${148+30*s}" cy="${base-th-30*s}" r="4" fill="#fff"/>
+                       <circle cx="${148-40*s}" cy="${base-th_val}" r="3" fill="#fff"/>
+                       <circle cx="${148+30*s}" cy="${base-th_val-30*s}" r="4" fill="#fff"/>
                      </g>`;
         }
       } 
       else if (style === 'blossom') {
-        // 벚꽃나무 (부드러운 곡선 기둥, 화려하고 무성한 핑크 잎)
-        trunk = `<path d="M ${148 - 16*s} ${base} C ${148 - 10*s} ${base - th*0.4}, ${148 - 20*s} ${base - th*0.7}, 148 ${base - th} C ${148 + 20*s} ${base - th*0.7}, ${148 + 10*s} ${base - th*0.4}, ${148 + 16*s} ${base} Z" fill="${t1}"/>`;
+        let th_val = 180 * s;
+        trunk = `<path d="M ${148 - 16*s} ${base} C ${148 - 10*s} ${base - th_val*0.4}, ${148 - 20*s} ${base - th_val*0.7}, 148 ${base - th_val} C ${148 + 20*s} ${base - th_val*0.7}, ${148 + 10*s} ${base - th_val*0.4}, ${148 + 16*s} ${base} Z" fill="${t1}"/>`;
         if(level >= 4) {
-          trunk += `<path d="M 148 ${base - th*0.6} Q ${148 - 40*s} ${base - th*0.7} ${148 - 60*s} ${base - th*0.9}" stroke="${t2}" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>`;
-          trunk += `<path d="M 148 ${base - th*0.5} Q ${148 + 40*s} ${base - th*0.6} ${148 + 60*s} ${base - th*0.8}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
+          trunk += `<path d="M 148 ${base - th_val*0.6} Q ${148 - 40*s} ${base - th_val*0.7} ${148 - 60*s} ${base - th_val*0.9}" stroke="${t2}" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>`;
+          trunk += `<path d="M 148 ${base - th_val*0.5} Q ${148 + 40*s} ${base - th_val*0.6} ${148 + 60*s} ${base - th_val*0.8}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
         }
-        
-        crown = `<circle cx="148" cy="${base - th}" r="${50*s}" fill="${c2}" opacity="0.9"/>`;
-        if(level >= 3) crown += `<circle cx="${148 - 30*s}" cy="${base - th + 20*s}" r="${45*s}" fill="${c3}" opacity="0.9"/>`;
-        if(level >= 4) crown += `<circle cx="${148 + 40*s}" cy="${base - th + 10*s}" r="${50*s}" fill="${c1}" opacity="0.9"/>`;
+        crown = `<circle cx="148" cy="${base - th_val}" r="${50*s}" fill="${c2}" opacity="0.9"/>`;
+        if(level >= 3) crown += `<circle cx="${148 - 30*s}" cy="${base - th_val + 20*s}" r="${45*s}" fill="${c3}" opacity="0.9"/>`;
+        if(level >= 4) crown += `<circle cx="${148 + 40*s}" cy="${base - th_val + 10*s}" r="${50*s}" fill="${c1}" opacity="0.9"/>`;
         if(level >= 6) {
-          crown += `<circle cx="${148 - 60*s}" cy="${base - th - 20*s}" r="${55*s}" fill="${c1}" opacity="0.8"/>
-                    <circle cx="${148 + 50*s}" cy="${base - th - 30*s}" r="${60*s}" fill="${c2}" opacity="0.8"/>
-                    <circle cx="148" cy="${base - th - 50*s}" r="${65*s}" fill="${c3}" opacity="0.8"/>`;
+          crown += `<circle cx="${148 - 60*s}" cy="${base - th_val - 20*s}" r="${55*s}" fill="${c1}" opacity="0.8"/>
+                    <circle cx="${148 + 50*s}" cy="${base - th_val - 30*s}" r="${60*s}" fill="${c2}" opacity="0.8"/>
+                    <circle cx="148" cy="${base - th_val - 50*s}" r="${65*s}" fill="${c3}" opacity="0.8"/>`;
         }
         if(level === 8) {
           extras = `<g class="animate-petal">
-                      <ellipse cx="${148-50*s}" cy="${base-th+20*s}" rx="4" ry="2" fill="#fff" transform="rotate(30 ${148-50*s} ${base-th+20*s})"/>
-                      <ellipse cx="${148+40*s}" cy="${base-th-40*s}" rx="5" ry="3" fill="#fff" transform="rotate(-20 ${148+40*s} ${base-th-40*s})"/>
-                      <ellipse cx="148" cy="${base-th}" rx="6" ry="3" fill="#fff" transform="rotate(10 148 ${base-th})"/>
+                      <ellipse cx="${148-50*s}" cy="${base-th_val+20*s}" rx="4" ry="2" fill="#fff" transform="rotate(30 ${148-50*s} ${base-th_val+20*s})"/>
+                      <ellipse cx="${148+40*s}" cy="${base-th_val-40*s}" rx="5" ry="3" fill="#fff" transform="rotate(-20 ${148+40*s} ${base-th_val-40*s})"/>
+                      <ellipse cx="148" cy="${base-th_val}" rx="6" ry="3" fill="#fff" transform="rotate(10 148 ${base-th_val})"/>
                     </g>`;
         }
       } 
       else if (style === 'pine') {
-        // 소나무 (거친 기둥, 뾰족뾰족한 솔잎 군락)
-        trunk = `<path d="M ${148 - 14*s} ${base} Q ${148 - 30*s} ${base - th*0.3} ${148 + 5*s} ${base - th*0.6} T 148 ${base - th} L ${148 + 10*s} ${base - th} Q ${148 + 30*s} ${base - th*0.6} ${148 + 5*s} ${base - th*0.3} Q ${148 + 10*s} ${base} ${148 + 14*s} ${base} Z" fill="${t1}"/>`;
+        let th_val = 200 * s;
+        trunk = `<path d="M ${148 - 14*s} ${base} Q ${148 - 30*s} ${base - th_val*0.3} ${148 + 5*s} ${base - th_val*0.6} T 148 ${base - th_val} L ${148 + 10*s} ${base - th_val} Q ${148 + 30*s} ${base - th_val*0.6} ${148 + 5*s} ${base - th_val*0.3} Q ${148 + 10*s} ${base} ${148 + 14*s} ${base} Z" fill="${t1}"/>`;
         if(level >= 4) {
-           trunk += `<path d="M ${148 + 5*s} ${base - th*0.5} Q ${148 + 60*s} ${base - th*0.4} ${148 + 80*s} ${base - th*0.6}" stroke="${t2}" stroke-width="${8*s}" fill="none" stroke-linecap="round"/>`;
-           trunk += `<path d="M ${148 - 5*s} ${base - th*0.7} Q ${148 - 50*s} ${base - th*0.6} ${148 - 70*s} ${base - th*0.8}" stroke="${t2}" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>`;
+           trunk += `<path d="M ${148 + 5*s} ${base - th_val*0.5} Q ${148 + 60*s} ${base - th_val*0.4} ${148 + 80*s} ${base - th_val*0.6}" stroke="${t2}" stroke-width="${8*s}" fill="none" stroke-linecap="round"/>`;
+           trunk += `<path d="M ${148 - 5*s} ${base - th_val*0.7} Q ${148 - 50*s} ${base - th_val*0.6} ${148 - 70*s} ${base - th_val*0.8}" stroke="${t2}" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>`;
         }
-        
-        crown = `<path d="M 148 ${base-th-40*s} L ${148-30*s} ${base-th} L ${148+30*s} ${base-th} Z" fill="${c1}"/>`;
+        crown = `<path d="M 148 ${base-th_val-40*s} L ${148-30*s} ${base-th_val} L ${148+30*s} ${base-th_val} Z" fill="${c1}"/>`;
         if(level >= 4) {
-          crown += `<path d="M ${148+80*s} ${base-th*0.6-30*s} L ${148+40*s} ${base-th*0.6+10*s} L ${148+120*s} ${base-th*0.6+10*s} Z" fill="${c2}"/>`;
+          crown += `<path d="M ${148+80*s} ${base-th_val*0.6-30*s} L ${148+40*s} ${base-th_val*0.6+10*s} L ${148+120*s} ${base-th_val*0.6+10*s} Z" fill="${c2}"/>`;
         }
         if(level >= 6) {
-          crown += `<path d="M ${148-70*s} ${base-th*0.8-30*s} L ${148-110*s} ${base-th*0.8+10*s} L ${148-30*s} ${base-th*0.8+10*s} Z" fill="${c3}"/>
-                    <path d="M 148 ${base-th-80*s} L ${148-50*s} ${base-th-20*s} L ${148+50*s} ${base-th-20*s} Z" fill="${c2}"/>`;
+          crown += `<path d="M ${148-70*s} ${base-th_val*0.8-30*s} L ${148-110*s} ${base-th_val*0.8+10*s} L ${148-30*s} ${base-th_val*0.8+10*s} Z" fill="${c3}"/>
+                    <path d="M 148 ${base-th_val-80*s} L ${148-50*s} ${base-th_val-20*s} L ${148+50*s} ${base-th_val-20*s} Z" fill="${c2}"/>`;
         }
         if(level === 8) {
-          extras = `<circle cx="${148-15*s}" cy="${base-th-10*s}" r="${6*s}" fill="#3e2723"/>
-                    <circle cx="${148+70*s}" cy="${base-th*0.6+5*s}" r="${7*s}" fill="#3e2723"/>
-                    <circle cx="${148-60*s}" cy="${base-th*0.8+5*s}" r="${5*s}" fill="#3e2723"/>`;
+          extras = `<circle cx="${148-15*s}" cy="${base-th_val-10*s}" r="${6*s}" fill="#3e2723"/>
+                    <circle cx="${148+70*s}" cy="${base-th_val*0.6+5*s}" r="${7*s}" fill="#3e2723"/>
+                    <circle cx="${148-60*s}" cy="${base-th_val*0.8+5*s}" r="${5*s}" fill="#3e2723"/>`;
         }
       } 
       else if (style === 'palm') {
-        // 야자수 (가늘고 휘어진 기둥, 반달형 잎)
-        trunk = `<path d="M ${148 - 12*s} ${base} Q ${148 + 40*s} ${base - th*0.5} ${148 + 20*s} ${base - th} L ${148 + 35*s} ${base - th} Q ${148 + 55*s} ${base - th*0.5} ${148 + 12*s} ${base} Z" fill="${t1}"/>`;
+        let th_val = 220 * s;
+        trunk = `<path d="M ${148 - 12*s} ${base} Q ${148 + 40*s} ${base - th_val*0.5} ${148 + 20*s} ${base - th_val} L ${148 + 35*s} ${base - th_val} Q ${148 + 55*s} ${base - th_val*0.5} ${148 + 12*s} ${base} Z" fill="${t1}"/>`;
         if(level >= 3) {
           for(let i=1; i<=7; i++) {
              let cx = 148 + 25*s*Math.sin(i/7 * Math.PI); 
-             let cy = base - th*(i/8);
+             let cy = base - th_val*(i/8);
              trunk += `<line x1="${cx - 10*s}" y1="${cy}" x2="${cx + 25*s}" y2="${cy}" stroke="${t2}" stroke-width="${2*s}"/>`;
           }
         }
         let topX = 148 + 25*s;
-        let topY = base - th;
+        let topY = base - th_val;
         
         crown = `<path d="M ${topX} ${topY} Q ${topX - 60*s} ${topY - 80*s} ${topX - 100*s} ${topY + 10*s} Q ${topX - 40*s} ${topY} ${topX} ${topY}" fill="${c1}"/>`;
         if(level >= 4) {
@@ -1138,53 +1113,53 @@
         }
       } 
       else if (style === 'maple') {
-        // 단풍나무 (가을 색상의 별모양 잎 군락)
-        trunk = `<path d="M ${148 - 14*s} ${base} C ${148 - 8*s} ${base - th*0.5}, ${148 - 20*s} ${base - th*0.8}, 148 ${base - th} C ${148 + 20*s} ${base - th*0.8}, ${148 + 8*s} ${base - th*0.5}, ${148 + 14*s} ${base} Z" fill="${t1}"/>`;
+        let th_val = 190 * s;
+        trunk = `<path d="M ${148 - 14*s} ${base} Q ${148 - 8*s} ${base - th_val*0.5} ${148 - 2*s} ${base - th_val} L ${148 + 2*s} ${base - th_val} Q ${148 + 8*s} ${base - th_val*0.5} ${148 + 14*s} ${base} Z" fill="url(#trunkGrad)"/>`;
         if(level >= 4) {
-          trunk += `<path d="M 148 ${base - th*0.6} Q ${148 - 50*s} ${base - th*0.7} ${148 - 70*s} ${base - th*0.85}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
-          trunk += `<path d="M 148 ${base - th*0.5} Q ${148 + 50*s} ${base - th*0.6} ${148 + 70*s} ${base - th*0.75}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
+          trunk += `<path d="M 148 ${base - th_val*0.6} Q ${148 - 50*s} ${base - th_val*0.7} ${148 - 70*s} ${base - th_val*0.85}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
+          trunk += `<path d="M 148 ${base - th_val*0.5} Q ${148 + 50*s} ${base - th_val*0.6} ${148 + 70*s} ${base - th_val*0.75}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
         }
         
-        crown = `<circle cx="148" cy="${base - th}" r="${50*s}" fill="${c1}"/>`;
+        crown = `<circle cx="148" cy="${base - th_val}" r="${50*s}" fill="${c1}"/>`;
         if(level >= 4) {
-          crown += `<polygon points="${148-70*s},${base-th*0.85} ${148-110*s},${base-th*0.85-30*s} ${148-50*s},${base-th*0.85-40*s} ${148-40*s},${base-th*0.85+20*s}" fill="${c2}"/>`;
-          crown += `<polygon points="${148+70*s},${base-th*0.75} ${148+120*s},${base-th*0.75-20*s} ${148+60*s},${base-th*0.75-40*s} ${148+40*s},${base-th*0.75+20*s}" fill="${c3}"/>`;
+          crown += `<polygon points="${148-70*s},${base-th_val*0.85} ${148-110*s},${base-th_val*0.85-30*s} ${148-50*s},${base-th_val*0.85-40*s} ${148-40*s},${base-th_val*0.85+20*s}" fill="${c2}"/>`;
+          crown += `<polygon points="${148+70*s},${base-th_val*0.75} ${148+120*s},${base-th_val*0.75-20*s} ${148+60*s},${base-th_val*0.75-40*s} ${148+40*s},${base-th_val*0.75+20*s}" fill="${c3}"/>`;
         }
         if(level >= 6) {
-          crown += `<polygon points="148,${base-th-30*s} ${148-50*s},${base-th-80*s} ${148},${base-th-110*s} ${148+50*s},${base-th-80*s}" fill="${c1}"/>
-                    <circle cx="${148 - 40*s}" cy="${base - th - 20*s}" r="${50*s}" fill="${c2}"/>
-                    <circle cx="${148 + 40*s}" cy="${base - th - 20*s}" r="${50*s}" fill="${c3}"/>`;
+          crown += `<polygon points="148,${base-th_val-30*s} ${148-50*s},${base-th_val-80*s} ${148},${base-th_val-110*s} ${148+50*s},${base-th_val-80*s}" fill="${c1}"/>
+                    <circle cx="${148 - 40*s}" cy="${base - th_val - 20*s}" r="${50*s}" fill="${c2}"/>
+                    <circle cx="${148 + 40*s}" cy="${base - th_val - 20*s}" r="${50*s}" fill="${c3}"/>`;
         }
         if(level === 8) {
           extras = `<g class="animate-petal">
-                      <polygon points="${148-40*s},${base-th+20*s} ${148-45*s},${base-th+10*s} ${148-35*s},${base-th+15*s}" fill="${c1}"/>
-                      <polygon points="${148+50*s},${base-th-20*s} ${148+45*s},${base-th-30*s} ${148+55*s},${base-th-25*s}" fill="${c2}"/>
+                      <polygon points="${148-40*s},${base-th_val+20*s} ${148-45*s},${base-th_val+10*s} ${148-35*s},${base-th_val+15*s}" fill="${c1}"/>
+                      <polygon points="${148+50*s},${base-th_val-20*s} ${148+45*s},${base-th_val-30*s} ${148+55*s},${base-th_val-25*s}" fill="${c2}"/>
                     </g>`;
         }
       } 
       else {
-        // 참나무 (기본 나무 - 풍성한 둥근 잎)
-        trunk = `<path d="M ${148 - 18*s} ${base} C ${148 - 10*s} ${base - th*0.5}, ${148 - 5*s} ${base - th*0.8}, 148 ${base - th} C ${148 + 5*s} ${base - th*0.8}, ${148 + 10*s} ${base - th*0.5}, ${148 + 18*s} ${base} Z" fill="${t1}"/>`;
+        let th_val = 200 * s;
+        trunk = `<path d="M ${148 - 18*s} ${base} C ${148 - 10*s} ${base - th_val*0.5}, ${148 - 5*s} ${base - th_val*0.8}, 148 ${base - th_val} C ${148 + 5*s} ${base - th_val*0.8}, ${148 + 10*s} ${base - th_val*0.5}, ${148 + 18*s} ${base} Z" fill="${t1}"/>`;
         if(level >= 4) {
-          trunk += `<path d="M 148 ${base - th*0.6} Q ${148 - 40*s} ${base - th*0.7} ${148 - 60*s} ${base - th*0.9}" stroke="${t2}" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>`;
-          trunk += `<path d="M 148 ${base - th*0.5} Q ${148 + 40*s} ${base - th*0.6} ${148 + 60*s} ${base - th*0.8}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
+          trunk += `<path d="M 148 ${base - th_val*0.6} Q ${148 - 40*s} ${base - th_val*0.7} ${148 - 60*s} ${base - th_val*0.9}" stroke="${t2}" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>`;
+          trunk += `<path d="M 148 ${base - th_val*0.5} Q ${148 + 40*s} ${base - th_val*0.6} ${148 + 60*s} ${base - th_val*0.8}" stroke="${t2}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>`;
         }
         
-        crown = `<circle cx="148" cy="${base - th}" r="${60*s}" fill="${c2}"/>`;
+        crown = `<circle cx="148" cy="${base - th_val}" r="${60*s}" fill="${c2}"/>`;
         if(level >= 4) {
-          crown += `<circle cx="${148 - 50*s}" cy="${base - th*0.9}" r="${50*s}" fill="${c3}"/>
-                    <circle cx="${148 + 50*s}" cy="${base - th*0.8}" r="${50*s}" fill="${c1}"/>`;
+          crown += `<circle cx="${148 - 50*s}" cy="${base - th_val*0.9}" r="${50*s}" fill="${c3}"/>
+                    <circle cx="${148 + 50*s}" cy="${base - th_val*0.8}" r="${50*s}" fill="${c1}"/>`;
         }
         if(level >= 6) {
-          crown += `<circle cx="${148 - 30*s}" cy="${base - th - 40*s}" r="${55*s}" fill="${c1}"/>
-                    <circle cx="${148 + 30*s}" cy="${base - th - 35*s}" r="${55*s}" fill="${c2}"/>
-                    <circle cx="148" cy="${base - th - 60*s}" r="${60*s}" fill="${c3}"/>`;
+          crown += `<circle cx="${148 - 30*s}" cy="${base - th_val - 40*s}" r="${55*s}" fill="${c1}"/>
+                    <circle cx="${148 + 30*s}" cy="${base - th_val - 35*s}" r="${55*s}" fill="${c2}"/>
+                    <circle cx="148" cy="${base - th_val - 60*s}" r="${60*s}" fill="${c3}"/>`;
         }
         if(level === 8) {
-          extras = `<circle cx="${148-30*s}" cy="${base-th-10*s}" r="${8*s}" fill="#ffd977"/>
-                    <circle cx="${148+40*s}" cy="${base-th+10*s}" r="${9*s}" fill="#ffd977"/>
-                    <circle cx="${148}" cy="${base-th-50*s}" r="${7*s}" fill="#ffd977"/>
-                    <circle cx="${148-60*s}" cy="${base-th*0.9}" r="${6*s}" fill="#ffd977"/>`;
+          extras = `<circle cx="${148-30*s}" cy="${base-th_val-10*s}" r="${8*s}" fill="#ffd977"/>
+                    <circle cx="${148+40*s}" cy="${base-th_val+10*s}" r="${9*s}" fill="#ffd977"/>
+                    <circle cx="${148}" cy="${base-th_val-50*s}" r="${7*s}" fill="#ffd977"/>
+                    <circle cx="${148-60*s}" cy="${base-th_val*0.9}" r="${6*s}" fill="#ffd977"/>`;
         }
       }
 
@@ -1313,8 +1288,22 @@
       el.progressBadge.textContent = `${getProgressPercent()}%`;
       el.barFill.style.width = `${getProgressPercent()}%`;
       
+      const recordBtn = el.openRecordBtn;
+      const btnTitle = el.recordBtnTitle;
+      const btnSub = el.recordBtnSub;
+
+      // 🔥 수정: 성장이 완료되었을 때 결과창 대신 버튼 비활성화 적용 🔥
       if(state.session >= state.maxSession) {
-         el.focusCopy.textContent = '아름답게 자란 나무가 마지막 인사를 기다리고 있어요';
+         el.focusCopy.textContent = '아름답게 자란 나무가 당신과 함께하고 있어요';
+         recordBtn.classList.add('completed');
+         recordBtn.disabled = true;
+         btnTitle.innerHTML = '수고하셨어요! 나무가 다 자랐어요 🌳';
+         btnSub.textContent = '나의 기록 모아보기에서 지난 마음을 돌아보세요.';
+      } else {
+         recordBtn.classList.remove('completed');
+         recordBtn.disabled = false;
+         btnTitle.textContent = '오늘의 마음 기록하기';
+         btnSub.textContent = '날씨를 먼저 고르고, 마음 기록을 남겨 물을 주세요';
       }
       
       renderTree();
@@ -1332,10 +1321,9 @@
       state.session += 1;
       state.level = state.session; 
       
-      // 성장 시 반짝이는 레벨업 애니메이션 추가
       const treeWrap = document.querySelector('.tree-wrap');
       treeWrap.classList.remove('level-up');
-      void treeWrap.offsetWidth; // 리플로우 강제
+      void treeWrap.offsetWidth; 
       treeWrap.classList.add('level-up');
 
       let message = '';
@@ -1356,12 +1344,6 @@
       resetRecordForm();
       updateMainUI();
       setTimeout(() => showModal(message), 600);
-    }
-
-    function showEnding() {
-      const style = (treeDataMap[state.mbti] || { style: 'oak' }).style;
-      el.endingVisual.innerHTML = `<div style="width:min(80vw,360px);">${treeSVG(style, 8)}</div>`;
-      showScreen(screens.ending);
     }
 
     function handleMbtiClick(event) {
@@ -1453,10 +1435,6 @@
             localStorage.removeItem('my_tree_name');
             window.location.reload();
         }
-      });
-      el.restartBtn.addEventListener('click', () => {
-        localStorage.removeItem('my_tree_name');
-        window.location.reload();
       });
       el.modalConfirmBtn.addEventListener('click', closeModal);
       
