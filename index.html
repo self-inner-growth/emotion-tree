@@ -641,7 +641,17 @@
     </div>
     <div class="toast" id="toast"></div>
   </div>
-
+  
+  <section id="screen-maintenance" class="screen simple-screen" style="justify-content: center; align-items: center; text-align: center; background: #e8f2ff; z-index: 100;">
+      <div class="hero-mark" style="margin-bottom: 16px; background: rgba(255,255,255,0.8);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#678097" stroke-width="2" style="width: 32px; height: 32px;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h2>숲이 잠시 쉬고 있어요</h2>
+      <p style="margin-top: 12px; font-size: 15px;">더 맑은 공기와 아름다운 나무를 위해<br>잠시 점검을 진행하고 있습니다.<br><br>조금 뒤에 다시 찾아와주세요!</p>
+    </section>
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxEX52ldquX4wf4kT88q2MCLW4Oy0wnohxdJWc-GBgnPuwi8eqDr3Zwi_K5Gb1bZZ9L1A/exec"; 
 
@@ -791,8 +801,31 @@
         return [];
       }
     }
-
+    
+    async function checkServerStatus() {
+      if (!GAS_URL || GAS_URL === "여기에_붙여넣기") return true; 
+      try {
+        // action=checkStatus 파라미터를 보내서 상태를 물어봅니다.
+        const response = await fetch(`${GAS_URL}?action=checkStatus`);
+        const data = await response.json();
+        return data.isActive; // true(활성) 또는 false(비활성) 반환
+      } catch(e) {
+        console.error("상태 확인 실패:", e);
+        return true; // 에러가 나면 일단 접속되게 처리 (필요시 false로 변경 가능)
+      }
+    }
+    
     async function initApp() {
+      // 1. 설정 시트의 활성화 여부 확인
+      const isOnline = await checkServerStatus();
+      
+      // 2. 비활성화 상태라면 점검 화면 띄우고 정지
+      if (!isOnline) {
+        document.getElementById('screen-maintenance').classList.add('active');
+        return; 
+      }
+
+      // 3. 활성화 상태라면 원래대로 게임 진행
       const savedTreeName = localStorage.getItem('my_tree_name');
       if (savedTreeName) {
         el.loadTreeInput.value = savedTreeName;
