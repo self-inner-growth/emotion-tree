@@ -668,7 +668,7 @@
       "기록을 남기면 나무가 조금 더 자라나요",
       "어떤 감정이든 성장의 훌륭한 거름이 될 거예요",
       "오늘 하루도 애쓴 당신의 마음에 토닥토닥",
-      "거창하지 않아도 괜찮아요, 있는 그대로의 나를 마주해요",
+      "괜찮아요, 있는 그대로의 나를 마주해요",
       "잠시 숨을 고르고 내 안의 이야기에 귀 기울여보세요",
       "당신의 솔직한 기록이 단단한 뿌리가 됩니다"
     ];
@@ -935,16 +935,16 @@
 
       if (displaySession >= 0 && displaySession <= 3) {
         treeWidth = "10%";  // 씨앗 & 새싹
-        treeBottom = "20px"; // 씨앗이 너무 떠있으면 음수값으로 내려줍니다
+        treeBottom = "50px"; // 씨앗이 너무 떠있으면 음수값으로 내려줍니다
       } else if (displaySession >= 4 && displaySession <= 6) {
         treeWidth = "30%";  // 묘목
-        treeBottom = "20px";
+        treeBottom = "50px";
       } else if (displaySession >= 7 && displaySession <= 8) {
-        treeWidth = "20%";  // 나무
-        treeBottom = "5px"; // 나무가 커지면 살짝 올립니다
+        treeWidth = "65%";  // 나무
+        treeBottom = "50px"; // 나무가 커지면 살짝 올립니다
       } else if (displaySession >= 9) {
         treeWidth = "100%"; // 열매 맺은 나무
-        treeBottom = "20px";
+        treeBottom = "500px";
       }
 
       // style에 margin-bottom을 추가하여 위치도 부드럽게 이동하도록 적용합니다.
