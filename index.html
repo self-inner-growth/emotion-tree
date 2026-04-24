@@ -241,7 +241,6 @@
       100% { transform: translate(90px, -150px) scale(0.8) rotate(15deg); opacity: 0; } 
     }
     
-    /* 🔥 새 애니메이션 및 크기 수정 완료 🔥 */
     @keyframes flyBird { 
       0% { transform: translate(-80px, 100px) scale(0.6) rotate(15deg); opacity: 0; } 
       20% { opacity: 1; transform: translate(30px, 20px) scale(1) rotate(5deg); } 
@@ -264,7 +263,7 @@
     
     .effect-bird { 
       position: absolute; 
-      width: 48px; /* 크기를 과하지 않게 축소 */
+      width: 48px;
       height: 48px; 
       z-index: 20; 
       animation: flyBird 6.5s ease-out forwards; 
@@ -935,13 +934,21 @@
       el.recordBackdrop.classList.remove('active');
     }
 
-    function showModal(text) {
+    let modalCallback = null; // 🔥 팝업 확인 후 실행할 작업을 저장하는 변수 🔥
+
+    function showModal(text, callback = null) {
       el.modalText.innerHTML = text;
       el.modalOverlay.classList.add('active');
+      modalCallback = callback; // 콜백 함수 저장
     }
 
     function closeModal() {
       el.modalOverlay.classList.remove('active');
+      if (modalCallback) {
+        // 팝업이 부드럽게 닫히는 시간(약 0.25초)을 기다린 후 새와 나무 애니메이션 시작!
+        setTimeout(modalCallback, 250); 
+        modalCallback = null;
+      }
     }
 
     function getProgressPercent() {
@@ -1174,17 +1181,10 @@
       }
     }
 
+    // 🔥 팝업 순서 변경 및 새 생성 조건을 40글자로 수정 완료 🔥
     function processGrowth() {
       state.session += 1;
-      const treeWrap = document.querySelector('.tree-wrap');
-      treeWrap.classList.remove('level-up');
-      void treeWrap.offsetWidth; 
-      treeWrap.classList.add('level-up');
-      burstTreeParticles();
-      
-      // 🔥 새 생성 조건을 50글자로 수정 완료 🔥
-      if (state.textLength >= 50) spawnEffects('bird');
-      else if (state.textLength >= 25) spawnEffects('butterfly');
+      const currentTextLength = state.textLength; // 글자 수를 미리 저장해둡니다 (초기화되기 전)
 
       let message = '';
       if (state.session === 1) message = '첫 마음을 기록했네요!<br>작은 씨앗이 여린 새싹을 틔웠어요.';
@@ -1194,9 +1194,23 @@
       else message = '오늘의 감정을 마주한 것만으로도<br>충분히 멋진 걸음입니다.';
       
       resetRecordForm();
-      updateMainUI();
       changeFocusMessage(); 
-      setTimeout(() => showModal(message), 600);
+      
+      // 1. 팝업을 먼저 띄웁니다.
+      // 2. 사용자가 '확인'을 누르면 아래 내부 로직(애니메이션)이 실행됩니다.
+      showModal(message, () => {
+        updateMainUI(); // 이때 나무가 다음 단계로 변하고, 게이지가 오름
+        
+        const treeWrap = document.querySelector('.tree-wrap');
+        treeWrap.classList.remove('level-up');
+        void treeWrap.offsetWidth; 
+        treeWrap.classList.add('level-up');
+        burstTreeParticles(); // 반짝이는 효과
+        
+        // 저장해둔 텍스트 길이에 따라 새(40자) 또는 나비 소환
+        if (currentTextLength >= 40) spawnEffects('bird');
+        else if (currentTextLength >= 25) spawnEffects('butterfly');
+      });
     }
 
     function handleMbtiClick(event) {
@@ -1298,7 +1312,10 @@
             window.location.reload();
         }
       });
+      
+      // 🔥 콜백 로직이 적용된 closeModal 함수를 바인딩 🔥
       el.modalConfirmBtn.addEventListener('click', closeModal);
+      
       el.reflectionInput.addEventListener('input', updateRecordButton);
       document.querySelectorAll('.mbti-btn').forEach(btn => btn.addEventListener('click', handleMbtiClick));
       document.querySelectorAll('.emotion-btn').forEach(btn => btn.addEventListener('click', handleEmotionClick));
