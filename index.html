@@ -204,18 +204,17 @@
     .hills-mid { height:34%; bottom:18%; z-index:2; animation: mountainSway 14s ease-in-out infinite reverse; background: radial-gradient(ellipse at 10% 100%, #8fd6a2 0 34%, transparent 35%), radial-gradient(ellipse at 42% 100%, #7dd092 0 36%, transparent 37%), radial-gradient(ellipse at 88% 100%, #74cb8a 0 33%, transparent 34%); }
     .hills-front { height:29%; bottom:8%; z-index:3; animation: mountainSway 12s ease-in-out infinite; background: radial-gradient(ellipse at 8% 100%, #6fc58a 0 40%, transparent 41%), radial-gradient(ellipse at 38% 100%, #5db874 0 46%, transparent 47%), radial-gradient(ellipse at 76% 100%, #58b577 0 44%, transparent 45%), radial-gradient(ellipse at 105% 100%, #4ba868 0 36%, transparent 37%); }
     
-    /* 🔥 땅 이미지 레이어 수정: 기존 도형 대신 하단을 꽉 채우는 실제 이미지 배치 🔥 */
     .ground-image-layer {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
-      height: 25%; /* 전체 화면에서 차지할 높이 */
+      height: 25%;
       background-image: url('field.png'); 
       background-size: cover; 
       background-position: center top;
       background-repeat: no-repeat;
-      z-index: 5; /* 나무(6)보다 뒤, 산(3)보다 앞 */
+      z-index: 5;
       pointer-events: none;
     }
 
@@ -241,35 +240,46 @@
       60% { transform: translate(60px, -80px) scale(1) rotate(-5deg); opacity: 1; } 
       100% { transform: translate(90px, -150px) scale(0.8) rotate(15deg); opacity: 0; } 
     }
+    
+    /* 🔥 새 애니메이션 및 크기 수정 완료 🔥 */
     @keyframes flyBird { 
       0% { transform: translate(-80px, 100px) scale(0.6) rotate(15deg); opacity: 0; } 
       20% { opacity: 1; transform: translate(30px, 20px) scale(1) rotate(5deg); } 
       70% { opacity: 1; transform: translate(180px, -80px) scale(1.1) rotate(-5deg); } 
       100% { transform: translate(350px, -200px) scale(1.3) rotate(-15deg); opacity: 0; } 
     }
-    /* 🔥 새 애니메이션: 위아래로 한 방향(동기화)으로 퍼덕이는 크고 우아한 날개짓 🔥 */
+    
     @keyframes flapWingLeft {
-      0%, 100% { transform: rotate(15deg) scaleY(0.7); } /* 날개가 아래로 내려감 */
-      50% { transform: rotate(-40deg) scaleY(1.1); }     /* 날개가 위로 넓게 펴짐 */
+      0%, 100% { transform: rotate(15deg) scaleY(0.7); }
+      50% { transform: rotate(-40deg) scaleY(1.1); }
     }
     @keyframes flapWingRight {
-      0%, 100% { transform: rotate(-15deg) scaleY(0.7); } /* 날개가 아래로 내려감 */
-      50% { transform: rotate(40deg) scaleY(1.1); }      /* 날개가 위로 넓게 펴짐 */
+      0%, 100% { transform: rotate(-15deg) scaleY(0.7); }
+      50% { transform: rotate(40deg) scaleY(1.1); }
     }
     
-    .effect-bird svg {
-      overflow: visible !important; /* 날개가 커져서 잘리지 않도록 허용 */
-    }
+    @keyframes sparkleAnim { 0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); } 50% { opacity: 1; transform: scale(1.5) rotate(180deg); } }
     
-    /* 🔥 날개 그룹에 애니메이션 및 회전 중심점 적용 🔥 */
+    .effect-butterfly { position: absolute; width: 28px; height: 28px; z-index: 20; animation: flyButterfly 4.5s ease-in-out forwards; pointer-events: none; }
+    
+    .effect-bird { 
+      position: absolute; 
+      width: 48px; /* 크기를 과하지 않게 축소 */
+      height: 48px; 
+      z-index: 20; 
+      animation: flyBird 6.5s ease-out forwards; 
+      pointer-events: none; 
+    }
+    .effect-bird svg { overflow: visible !important; }
     .effect-bird svg .bird-wing-left { 
-      transform-origin: 12px 12px; /* 몸통 중심 */
-      animation: flapWingLeft 0.35s ease-in-out infinite; /* 엇박자 딜레이 삭제 (동기화) */
+      transform-origin: 12px 12px;
+      animation: flapWingLeft 0.35s ease-in-out infinite; 
     }
     .effect-bird svg .bird-wing-right { 
-      transform-origin: 12px 12px; /* 몸통 중심 */
-      animation: flapWingRight 0.35s ease-in-out infinite; /* 엇박자 딜레이 삭제 (동기화) */
+      transform-origin: 12px 12px;
+      animation: flapWingRight 0.35s ease-in-out infinite; 
     }
+
     .effect-sparkle { position: absolute; width: 20px; height: 20px; z-index: 15; animation: sparkleAnim 2.5s ease-in-out forwards; pointer-events: none; }
 
     .ui-overlay { position:absolute; inset:0; z-index:10; padding:16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; }
@@ -408,7 +418,6 @@
 
     @keyframes rainFall { 0% { transform: translateY(-20px) scaleY(1); opacity: 0; } 20% { opacity: 0.8; } 80% { opacity: 0.8; } 100% { transform: translateY(100vh) scaleY(1.5); opacity: 0; } }
     @keyframes windBlow { 0% { transform: translateX(100vw) rotate(-15deg); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { transform: translateX(-30vw) rotate(-15deg); opacity: 0; } }
-    @keyframes starTwinkle { 0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); } 50% { opacity: 1; transform: scale(1.3) rotate(45deg); box-shadow: 0 0 20px rgba(255, 240, 180, 0.9), 0 0 40px rgba(255, 255, 255, 0.6); } }
   </style>
 </head>
 <body>
@@ -685,24 +694,21 @@
       sparkle: `<svg width="100%" height="100%" viewBox="0 0 24 24"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="rgba(255,240,180,0.9)" filter="drop-shadow(0 0 8px rgba(255,230,100,0.8))"/></svg>`,
       butterfly: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.6));"><path d="M12 12c-2-4-6-5-9-3 0 0 2 6 6 7 2 1 3-4 3-4zm0 0c2-4 6-5 9-3 0 0-2 6-6 7-2 1-3-4-3-4z"/><path d="M12 5v7"/></svg>`,
       
-      // 🔥 날개 구조 및 애니메이션 클래스가 적용된 새 SVG 🔥
-      bird: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="url(#birdGrad)" stroke="none" stroke-linejoin="round" style="filter: drop-shadow(0 8px 16px rgba(255,255,255,0.9)) drop-shadow(0 0 20px rgba(255, 240, 180, 0.6)); overflow: visible;">
+      // 🔥 수정된 빛나는 실루엣 새 (왼쪽 날개 뒤, 오른쪽 날개 앞) 🔥
+      bird: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="url(#birdGrad)" stroke="none" stroke-linejoin="round" style="filter: drop-shadow(0 6px 12px rgba(255,255,255,0.8)) drop-shadow(0 0 15px rgba(255, 240, 180, 0.6)); overflow: visible;">
         <defs>
           <linearGradient id="birdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#ffffff" />
             <stop offset="100%" stop-color="#d4edff" />
           </linearGradient>
         </defs>
-
         <g class="bird-wing-left">
           <path d="M12,12 C7,4 -1,2 -2,8 C-2,13 5,15 12,12 Z" fill="rgba(255,255,255,0.3)"/>
         </g>
-
         <path d="M12 12c-2 2-3 5-3 5h6s-1-3-3-5z" fill="rgba(255,255,255,0.2)"/>
         <path d="M21.3,7.6c-1.5-1.5-4.5-1-7,0.5C12.5,9,10,10.6,8,11.3c-2,0.8-4.3,0.3-6-1.1c-0.4-0.4-1.2,0.1-1.1,0.6 c0.3,3.3,2.4,6.2,5.4,7.4c1.8,0.7,3.9,0.8,5.8,0.3c1.4-0.3,2.7-1,3.8-1.9c2.2-1.7,4.4-3.5,6.8-4c1.9-0.4,3.5,0.4,4.5,1.9 c0.4,0.5,1.2,0.1,1.1-0.4C24,11.5,23.1,9.4,21.3,7.6z"/>
-        
         <g class="bird-wing-right">
-          <path d="M12,12 C17,4 25,2 26,8 C26,13 19,15 12,12 Z" fill="rgba(255,255,255,0.75)"/>
+          <path d="M12,12 C17,4 25,2 26,8 C26,13 19,15 12,12 Z" fill="rgba(255,255,255,0.8)"/>
         </g>
       </svg>`
     };
@@ -971,23 +977,22 @@
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
       let treeWidth = "100%"; 
-      let treeOffset = "0px"; // 높이 조절용 변수
+      let treeOffset = "0px"; 
       
       if (displaySession >= 0 && displaySession <= 3) {
-        treeWidth = "12%";  // 씨앗 & 새싹
-        treeOffset = "30px"; // 씨앗/새싹일 때 위로 30px 띄움
+        treeWidth = "12%";  
+        treeOffset = "30px"; 
       } else if (displaySession >= 4 && displaySession <= 6) {
-        treeWidth = "40%";  // 묘목
-        treeOffset = "10px"; // 묘목일 때 위로 10px 띄움 (필요시 수정)
+        treeWidth = "40%";  
+        treeOffset = "10px"; 
       } else if (displaySession >= 7 && displaySession <= 8) {
-        treeWidth = "80%";  // 나무
+        treeWidth = "80%";  
         treeOffset = "0px";
       } else if (displaySession >= 9) {
-        treeWidth = "120%"; // 열매
+        treeWidth = "120%"; 
         treeOffset = "0px";
       }
 
-      // 🔥 핵심: style 속성 안에 margin-bottom: ${treeOffset}을 명시해야 적용됩니다.
       el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" 
         style="width: ${treeWidth}; margin-bottom: ${treeOffset}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
     }
@@ -1133,8 +1138,10 @@
       setTimeout(() => burst.remove(), 900);
     }
 
+    // 🔥 새/나비 생성 시, 나무 그리드를 건드리지 않도록 mainScene(전체 배경)에 직접 추가 🔥
     function spawnEffects(type) {
-      const stage = document.querySelector('.tree-stage');
+      const stage = el.mainScene; 
+      
       for (let i = 0; i < 6; i++) {
           const sparkle = document.createElement('div');
           sparkle.className = 'effect-sparkle';
@@ -1163,7 +1170,7 @@
           bird.style.left = `10%`;
           bird.style.top = `70%`;
           stage.appendChild(bird);
-          setTimeout(() => bird.remove(), 5500);
+          setTimeout(() => bird.remove(), 6500); // 6.5초 애니메이션 지속시간에 맞춤
       }
     }
 
@@ -1174,7 +1181,9 @@
       void treeWrap.offsetWidth; 
       treeWrap.classList.add('level-up');
       burstTreeParticles();
-      if (state.textLength >= 40) spawnEffects('bird');
+      
+      // 🔥 새 생성 조건을 50글자로 수정 완료 🔥
+      if (state.textLength >= 50) spawnEffects('bird');
       else if (state.textLength >= 25) spawnEffects('butterfly');
 
       let message = '';
