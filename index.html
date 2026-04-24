@@ -932,20 +932,25 @@
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
       let treeWidth = "100%"; 
-      let treeOffset = "0px";
+      let treeOffset = "0px"; // 높이 조절용 변수
       
       if (displaySession >= 0 && displaySession <= 3) {
         treeWidth = "12%";  // 씨앗 & 새싹
-        treeOffset = "30px";
+        treeOffset = "30px"; // 씨앗/새싹일 때 위로 30px 띄움
       } else if (displaySession >= 4 && displaySession <= 6) {
         treeWidth = "40%";  // 묘목
+        treeOffset = "10px"; // 묘목일 때 위로 10px 띄움 (필요시 수정)
       } else if (displaySession >= 7 && displaySession <= 8) {
         treeWidth = "80%";  // 나무
+        treeOffset = "0px";
       } else if (displaySession >= 9) {
         treeWidth = "120%"; // 열매
+        treeOffset = "0px";
       }
 
-      el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" style="width: ${treeWidth}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
+      // 🔥 핵심: style 속성 안에 margin-bottom: ${treeOffset}을 명시해야 적용됩니다.
+      el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" 
+        style="width: ${treeWidth}; margin-bottom: ${treeOffset}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
     }
 
     function renderWeather() {
