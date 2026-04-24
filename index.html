@@ -929,7 +929,20 @@
       
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
-      el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" />`;
+      // 🔥 성장 단계별 나무 너비(width) 설정 로직 추가 🔥
+      let treeWidth = "100%"; 
+      if (displaySession >= 0 && displaySession <= 3) {
+        treeWidth = "10%";  // 씨앗(0) & 새싹(1~3)
+      } else if (displaySession >= 4 && displaySession <= 6) {
+        treeWidth = "30%";  // 묘목(4~6)
+      } else if (displaySession >= 7 && displaySession <= 8) {
+        treeWidth = "65%";  // 나무(7~8)
+      } else if (displaySession >= 9) {
+        treeWidth = "100%"; // 열매 맺은 나무(9)
+      }
+
+      // 이미지 태그에 인라인 스타일로 width와 부드러운 애니메이션(transition) 적용
+      el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" style="width: ${treeWidth}; height: auto; transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
 
       const treeWrap = document.querySelector(".tree-wrap");
       if (treeWrap) {
