@@ -932,15 +932,20 @@
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
       let treeWidth = "100%"; 
+      let treeOffset = "0px";
       
       if (displaySession >= 0 && displaySession <= 3) {
         treeWidth = "12%";  // 씨앗 & 새싹
+        treeOffset = "60px";
       } else if (displaySession >= 4 && displaySession <= 6) {
         treeWidth = "35%";  // 묘목
+        treeOffset = "60px";
       } else if (displaySession >= 7 && displaySession <= 8) {
         treeWidth = "75%";  // 나무
+        treeOffset = "60px";
       } else if (displaySession >= 9) {
         treeWidth = "100%"; // 열매
+        treeOffset = "60px";
       }
 
       el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" style="width: ${treeWidth}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
