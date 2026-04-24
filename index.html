@@ -932,11 +932,14 @@
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
       let treeWidth = "100%"; 
+      let treeOffset = "0px";
       
       if (displaySession >= 0 && displaySession <= 3) {
         treeWidth = "12%";  // 씨앗 & 새싹
+        treeOffset = "10px";
       } else if (displaySession >= 4 && displaySession <= 6) {
         treeWidth = "40%";  // 묘목
+        treeOffset = "10px";
       } else if (displaySession >= 7 && displaySession <= 8) {
         treeWidth = "80%";  // 나무
       } else if (displaySession >= 9) {
