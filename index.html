@@ -204,35 +204,33 @@
     .hills-mid { height:34%; bottom:18%; z-index:2; animation: mountainSway 14s ease-in-out infinite reverse; background: radial-gradient(ellipse at 10% 100%, #8fd6a2 0 34%, transparent 35%), radial-gradient(ellipse at 42% 100%, #7dd092 0 36%, transparent 37%), radial-gradient(ellipse at 88% 100%, #74cb8a 0 33%, transparent 34%); }
     .hills-front { height:29%; bottom:8%; z-index:3; animation: mountainSway 12s ease-in-out infinite; background: radial-gradient(ellipse at 8% 100%, #6fc58a 0 40%, transparent 41%), radial-gradient(ellipse at 38% 100%, #5db874 0 46%, transparent 47%), radial-gradient(ellipse at 76% 100%, #58b577 0 44%, transparent 45%), radial-gradient(ellipse at 105% 100%, #4ba868 0 36%, transparent 37%); }
     
-    /* 🔥 추가된 땅 이미지 레이어 스타일 🔥 */
+    /* 🔥 땅 이미지 레이어 수정: 기존 도형 대신 하단을 꽉 채우는 실제 이미지 배치 🔥 */
     .ground-image-layer {
       position: absolute;
-      inset: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 25%; /* 전체 화면에서 차지할 높이 */
       background-image: url('field.png'); 
       background-size: cover; 
-      background-position: center bottom;
+      background-position: center top;
       background-repeat: no-repeat;
-      z-index: 5; /* 나무(6)의 바로 뒤에 위치하도록 설정 */
+      z-index: 5; /* 나무(6)보다 뒤, 산(3)보다 앞 */
       pointer-events: none;
     }
 
-    .ground-path { position:absolute; bottom:10%; left:50%; width:62%; height:16%; transform:translateX(-50%); border-radius:50% 50% 0 0; z-index:5; background: linear-gradient(180deg, #dbbd88 0%, #c89d66 58%, #b6854f 100%); }
-    .ground-track { position:absolute; left:-8%; right:-8%; bottom:0; height:23%; z-index:4; background: linear-gradient(180deg, #86d084 0%, #79c17b 38%, #4e9f63 100%); border-radius: 42% 42% 0 0 / 16% 16% 0 0; }
-    .track-lines { position:absolute; left:50%; bottom:6%; width:72%; height:14%; transform:translateX(-50%); z-index:5; opacity:0.34; background: linear-gradient(90deg, transparent 0 10%, rgba(255,255,255,0.55) 10% 13%, transparent 13% 25%, rgba(255,255,255,0.55) 25% 28%, transparent 28% 40%, rgba(255,255,255,0.55) 40% 43%, transparent 43% 55%, rgba(255,255,255,0.55) 55% 58%, transparent 58% 70%, rgba(255,255,255,0.55) 70% 73%, transparent 73% 100%); clip-path: polygon(12% 100%, 36% 16%, 64% 16%, 88% 100%); }
-    
-    .tree-stage { position:absolute; inset:0; z-index:6; display:grid; place-items:end center; padding-bottom:110px; perspective: 1000px; }
+    .tree-stage { position:absolute; inset:0; z-index:6; display:grid; place-items:end center; padding-bottom: 12%; perspective: 1000px; }
     
     @keyframes treeSway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
     @keyframes levelUpPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,215,0,0)); } 40% { transform: scale(1.08); filter: drop-shadow(0 0 30px rgba(255,215,0,0.8)); } 100% { transform: scale(1); filter: drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); } }
     
     .tree-wrap { position:relative; width:min(88vw, 380px); height: 50vh; display: flex; justify-content: center; align-items: flex-end; transform-origin: center bottom; transition: transform 0.5s ease; }
     .tree-wrap.level-up { animation: levelUpPulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-    .tree-shadow { position:absolute; bottom:2px; left:50%; width:60%; height:10%; transform:translateX(-50%); background: radial-gradient(ellipse at center, rgba(38, 92, 45, 0.4) 0%, rgba(38, 92, 45, 0.1) 55%, transparent 72%); filter: blur(6px); transition: all 1s ease; z-index: -1; }
+    .tree-shadow { position:absolute; bottom: -5px; left:50%; width:60%; height:10%; transform:translateX(-50%); background: radial-gradient(ellipse at center, rgba(38, 92, 45, 0.4) 0%, rgba(38, 92, 45, 0.1) 55%, transparent 72%); filter: blur(6px); transition: all 1s ease; z-index: -1; }
     
     .tree-art { width: 100%; height: 100%; display: flex; justify-content: center; align-items: flex-end; }
     .tree-art img { max-height: 100%; width: auto; object-fit: contain; filter: drop-shadow(0 18px 18px rgba(50, 93, 67, 0.14)); }
 
-    /* 🔥 고급스러운 파티클 및 SVG 아이콘 효과 CSS 🔥 */
     @keyframes burstFade { 0% { transform: scale(0.5); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
     .tree-burst { position: absolute; inset: 28% 28% auto 28%; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95) 0 8%, transparent 9%), radial-gradient(circle, rgba(255,225,138,0.8) 0 10%, transparent 11%); filter: blur(8px); animation: burstFade 0.9s ease-out forwards; pointer-events: none; z-index: 10;}
     
@@ -305,7 +303,6 @@
     .bottom-tabs { display:grid; grid-template-columns:1fr; padding: 0 16px; margin-top: -4px; margin-bottom: 8px;}
     .record-tab-btn { background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(8px); padding: 14px; border-radius: 20px; font-weight: 600; color: var(--color-text); text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-sm); pointer-events: auto;}
     
-    /* 🔥 날씨 및 기록 팝업 배경 설정 🔥 */
     #screen-record, #screen-weather {
       inset:auto 0 0 0;
       height: auto;
@@ -324,7 +321,6 @@
       transition: transform 260ms cubic-bezier(.22,1,.36,1);
     }
     
-    /* 날씨 테마 컬러 전환 애니메이션 설정 */
     #screen-weather { 
       background-color: rgba(194, 230, 250, 0.9);
       background-image: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
@@ -335,7 +331,6 @@
       padding:22px 20px 40px; 
     }
     
-    /* 테마별 배경 색상 */
     #screen-weather.theme-joy { background-color: rgba(255, 232, 160, 0.95); }
     #screen-weather.theme-sadness { background-color: rgba(210, 222, 235, 0.95); }
     #screen-weather.theme-anger { background-color: rgba(210, 232, 228, 0.95); }
@@ -473,13 +468,9 @@
             <div id="treeArt" class="tree-art"></div>
           </div>
         </div>
-        <div class="ground-path"></div>
-        <div class="ground-track"></div>
-        <div class="track-lines"></div>
       </div>
       
       <section class="ui-overlay">
-        
         <div class="top-dashboard glass">
           <div class="dash-header">
             <div class="profile-wrap">
@@ -625,7 +616,6 @@
   </div>
 
   <script>
-    // 🔥 여기에 최종 발급받은 웹 앱 URL을 붙여넣으세요! 🔥
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxEX52ldquX4wf4kT88q2MCLW4Oy0wnohxdJWc-GBgnPuwi8eqDr3Zwi_K5Gb1bZZ9L1A/exec"; 
 
     const state = {
@@ -938,31 +928,22 @@
 
     function renderTree() {
       const styleKey = treeDataMap[state.mbti]?.style || "oak";
-      const mood = emotionTreeTone[state.selectedEmotion || "default"];
       const displaySession = Math.min(state.session, state.maxSession);
-      
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
-      // 🔥 성장 단계별 나무 너비(width)와 높이 조정(marginBottom) 추가 🔥
       let treeWidth = "100%"; 
-      let treeBottom = "0px"; // 기본 위치
-
+      
       if (displaySession >= 0 && displaySession <= 3) {
-        treeWidth = "10%";  // 씨앗 & 새싹
-        treeBottom = "50px"; // 씨앗이 너무 떠있으면 음수값으로 내려줍니다
+        treeWidth = "12%";  // 씨앗 & 새싹
       } else if (displaySession >= 4 && displaySession <= 6) {
-        treeWidth = "30%";  // 묘목
-        treeBottom = "50px";
+        treeWidth = "35%";  // 묘목
       } else if (displaySession >= 7 && displaySession <= 8) {
-        treeWidth = "65%";  // 나무
-        treeBottom = "50px"; // 나무가 커지면 살짝 올립니다
+        treeWidth = "75%";  // 나무
       } else if (displaySession >= 9) {
-        treeWidth = "100%"; // 열매 맺은 나무
-        treeBottom = "500px";
+        treeWidth = "100%"; // 열매
       }
 
-      // style에 margin-bottom을 추가하여 위치도 부드럽게 이동하도록 적용합니다.
-      el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" style="width: ${treeWidth}; margin-bottom: ${treeBottom}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
+      el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" style="width: ${treeWidth}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
     }
 
     function renderWeather() {
@@ -1053,9 +1034,7 @@
       el.sunGlow.style.display = meta.sun ? 'block' : 'none';
       
       let displayTreeType = "??? 나무";
-      if (state.session >= 9) {
-          displayTreeType = data.type; 
-      }
+      if (state.session >= 9) displayTreeType = data.type; 
       
       el.uiTreeNickname.textContent = state.treeName || '내마음이';
       el.uiTreeName.textContent = `${data.modifier} ${displayTreeType}`;
@@ -1110,7 +1089,6 @@
 
     function spawnEffects(type) {
       const stage = document.querySelector('.tree-stage');
-      
       for (let i = 0; i < 6; i++) {
           const sparkle = document.createElement('div');
           sparkle.className = 'effect-sparkle';
@@ -1121,7 +1099,6 @@
           stage.appendChild(sparkle);
           setTimeout(() => sparkle.remove(), 2500);
       }
-
       if (type === 'butterfly') {
           for (let i = 0; i < 2; i++) {
               const butterfly = document.createElement('div');
@@ -1146,19 +1123,13 @@
 
     function processGrowth() {
       state.session += 1;
-      
       const treeWrap = document.querySelector('.tree-wrap');
       treeWrap.classList.remove('level-up');
       void treeWrap.offsetWidth; 
       treeWrap.classList.add('level-up');
-
       burstTreeParticles();
-
-      if (state.textLength >= 40) {
-          spawnEffects('bird');
-      } else if (state.textLength >= 25) {
-          spawnEffects('butterfly');
-      }
+      if (state.textLength >= 40) spawnEffects('bird');
+      else if (state.textLength >= 25) spawnEffects('butterfly');
 
       let message = '';
       if (state.session === 1) message = '첫 마음을 기록했네요!<br>작은 씨앗이 여린 새싹을 틔웠어요.';
@@ -1169,9 +1140,7 @@
       
       resetRecordForm();
       updateMainUI();
-      
       changeFocusMessage(); 
-      
       setTimeout(() => showModal(message), 600);
     }
 
@@ -1179,11 +1148,9 @@
       const btn = event.currentTarget;
       const row = btn.closest('.mbti-row');
       const group = row.dataset.group;
-      
       row.querySelectorAll('.mbti-btn').forEach(node => node.classList.remove('selected'));
       btn.classList.add('selected');
       state.mbtiSelections[group] = btn.dataset.type;
-      
       updateMbtiNextButton();
     }
 
@@ -1192,11 +1159,8 @@
       document.querySelectorAll('.emotion-btn').forEach(node => node.classList.remove('selected'));
       btn.classList.add('selected');
       state.selectedEmotion = btn.dataset.emo;
-      
-      // 날씨 팝업 배경색 테마 변경
       screens.weather.classList.remove('theme-joy', 'theme-sadness', 'theme-anger', 'theme-excitement', 'theme-fatigue');
       screens.weather.classList.add(`theme-${state.selectedEmotion}`);
-      
       updateRecordButton();
       updateWeatherConfirmButton();
     }
@@ -1206,78 +1170,53 @@
       let currentY = 0;
       let isDragging = false;
       const handleWrap = sheetElement.querySelector('.sheet-handle-wrap');
-
       handleWrap.addEventListener('touchstart', (e) => {
         startY = e.touches[0].clientY;
         isDragging = true;
         sheetElement.style.transition = 'none'; 
       }, {passive: true});
-
       handleWrap.addEventListener('touchmove', (e) => {
         if (!isDragging) return;
         currentY = e.touches[0].clientY;
         const diff = currentY - startY;
-        if (diff > 0) { 
-          sheetElement.style.transform = `translateY(${diff}px)`;
-        }
+        if (diff > 0) sheetElement.style.transform = `translateY(${diff}px)`;
       }, {passive: true});
-
       handleWrap.addEventListener('touchend', () => {
         if (!isDragging) return;
         isDragging = false;
         sheetElement.style.transition = ''; 
         sheetElement.style.transform = ''; 
-
         const diff = currentY - startY;
         if (diff > 80) closeCallback();
       });
     }
 
     function bindEvents() {
-      // 메인 화면 빈 곳 터치 시 포인트 문구 변경
       screens.main.addEventListener('click', (e) => {
-        if (!e.target.closest('button')) {
-          changeFocusMessage();
-        }
+        if (!e.target.closest('button')) changeFocusMessage();
       });
-      
-      el.introStartBtn.addEventListener('click', () => {
-        showScreen(screens.mbti);
-      });
-      
-      el.loadTreeBtn.addEventListener('click', () => {
-        handleLoadTree(el.loadTreeInput.value.trim());
-      });
-
+      el.introStartBtn.addEventListener('click', () => showScreen(screens.mbti));
+      el.loadTreeBtn.addEventListener('click', () => handleLoadTree(el.loadTreeInput.value.trim()));
       el.mbtiNextBtn.addEventListener('click', () => showScreen(screens.name));
       el.nameNextBtn.addEventListener('click', () => {
         state.treeName = el.treeNameInput.value.trim();
         localStorage.setItem('my_tree_name', state.treeName);
         saveRecord('system', '새로운 나무가 싹을 틔웠습니다.');
-        
         state.session = 0;
         updateMainUI();
         showScreen(screens.main);
       });
-      
       el.treeNameInput.addEventListener('input', updateNameNextButton);
-      
       el.openRecordBtn.addEventListener('click', () => {
-        if (!state.selectedEmotion) {
-          openWeatherSheet();
-          return;
-        }
+        if (!state.selectedEmotion) { openWeatherSheet(); return; }
         openRecordSheet();
       });
-      
       el.weatherOpenBtn.addEventListener('click', openWeatherSheet);
       el.closeRecordBtn.addEventListener('click', closeRecordSheet);
       el.closeWeatherBtn.addEventListener('click', closeWeatherSheet);
       el.recordBackdrop.addEventListener('click', () => { closeRecordSheet(); closeWeatherSheet(); });
-      
       setupSwipeToClose(screens.record, closeRecordSheet);
       setupSwipeToClose(screens.weather, closeWeatherSheet);
-      
       el.weatherConfirmBtn.addEventListener('click', () => {
         const meta = emotionMeta[state.selectedEmotion];
         saveRecord('weather', meta.label); 
@@ -1286,34 +1225,26 @@
         changeFocusMessage();
         showToast('오늘의 날씨가 기록되고 배경에 반영됐어요.');
       });
-      
       el.waterBtn.addEventListener('click', () => {
         const text = el.reflectionInput.value.trim();
         saveRecord('journal', text); 
         closeRecordSheet();
         processGrowth();
       });
-      
       el.openHistoryBtn.addEventListener('click', () => {
         loadAndRenderHistory();
         showScreen(screens.history);
       });
-      
-      el.closeHistoryBtn.addEventListener('click', () => {
-        showScreen(screens.main);
-      });
-
+      el.closeHistoryBtn.addEventListener('click', () => showScreen(screens.main));
       el.helpBtn.addEventListener('click', () => showToast('날씨를 먼저 고르고 오늘 마음을 남겨주세요.'));
       el.resetBtn.addEventListener('click', () => {
-        if(confirm('진행 사항을 처음부터 다시 하시겠습니까?\n(다른 나무 이름으로 시작할 수 있습니다)')){
+        if(confirm('진행 사항을 처음부터 다시 하시겠습니까?')) {
             localStorage.removeItem('my_tree_name');
             window.location.reload();
         }
       });
       el.modalConfirmBtn.addEventListener('click', closeModal);
-      
       el.reflectionInput.addEventListener('input', updateRecordButton);
-      
       document.querySelectorAll('.mbti-btn').forEach(btn => btn.addEventListener('click', handleMbtiClick));
       document.querySelectorAll('.emotion-btn').forEach(btn => btn.addEventListener('click', handleEmotionClick));
     }
