@@ -422,6 +422,17 @@
 <body>
   <div class="app-shell" id="appRoot">
     
+    <section id="screen-maintenance" class="screen simple-screen" style="justify-content: center; align-items: center; text-align: center; background: #e8f2ff; z-index: 100;">
+      <div class="hero-mark" style="margin-bottom: 16px; background: rgba(255,255,255,0.8);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#678097" stroke-width="2" style="width: 32px; height: 32px;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h2>숲이 잠시 쉬어가는 시간이에요</h2>
+      <p style="margin-top: 12px; font-size: 15px;">나무가 튼튼하게 뿌리를 내릴 시간이 필요하듯,<br>우리도 일상에서 마음을 돌볼 시간이 필요해요.<br><br>다음 프로그램 시간에,<br>한 뼘 더 자란 마음으로 만나요!</p>
+    </section>
+
     <section id="screen-intro" class="screen simple-screen active">
       <div class="hero-mark" style="margin-bottom: 4px;">
         <img src="Logo.jpg" alt="나의 작은 숲 로고" style="width: 100%; height: 100%; object-fit: cover;" />
@@ -641,17 +652,7 @@
     </div>
     <div class="toast" id="toast"></div>
   </div>
-  
-  <section id="screen-maintenance" class="screen simple-screen" style="justify-content: center; align-items: center; text-align: center; background: #e8f2ff; z-index: 100;">
-      <div class="hero-mark" style="margin-bottom: 16px; background: rgba(255,255,255,0.8);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#678097" stroke-width="2" style="width: 32px; height: 32px;">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-      </div>
-      <h2>숲이 잠시 쉬어가는 시간이에요 🌿</h2>
-      <p style="margin-top: 12px; font-size: 15px;">나무가 물을 흡수하고 튼튼하게 뿌리를 내리려면<br>기다림의 시간이 필요해요.<br><br>우리도 일상 속에서 내 마음을<br>스스로 돌볼 수 있도록<br>잠시 휴식기를 가지고 있습니다.<br><br>다음 프로그램 시간에,<br>한 뼘 더 자란 마음으로 숲에서 다시 만나요!</p>
-    </section>
+
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxEX52ldquX4wf4kT88q2MCLW4Oy0wnohxdJWc-GBgnPuwi8eqDr3Zwi_K5Gb1bZZ9L1A/exec"; 
 
@@ -703,7 +704,6 @@
       sparkle: `<svg width="100%" height="100%" viewBox="0 0 24 24"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="rgba(255,240,180,0.9)" filter="drop-shadow(0 0 8px rgba(255,230,100,0.8))"/></svg>`,
       butterfly: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.6));"><path d="M12 12c-2-4-6-5-9-3 0 0 2 6 6 7 2 1 3-4 3-4zm0 0c2-4 6-5 9-3 0 0-2 6-6 7-2 1-3-4-3-4z"/><path d="M12 5v7"/></svg>`,
       
-      // 🔥 수정된 빛나는 실루엣 새 (왼쪽 날개 뒤, 오른쪽 날개 앞) 🔥
       bird: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="url(#birdGrad)" stroke="none" stroke-linejoin="round" style="filter: drop-shadow(0 6px 12px rgba(255,255,255,0.8)) drop-shadow(0 0 15px rgba(255, 240, 180, 0.6)); overflow: visible;">
         <defs>
           <linearGradient id="birdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -780,8 +780,39 @@
       main: document.getElementById('screen-main'),
       record: document.getElementById('screen-record'),
       weather: document.getElementById('screen-weather'),
-      history: document.getElementById('screen-history')
+      history: document.getElementById('screen-history'),
+      maintenance: document.getElementById('screen-maintenance')
     };
+
+    // 🔥 1. 서버 상태 체크 (프로그램 활성화/비활성화) 🔥
+    async function checkServerStatus() {
+      if (!GAS_URL || GAS_URL === "여기에_붙여넣기") return true; 
+      try {
+        const response = await fetch(`${GAS_URL}?action=checkStatus`);
+        const data = await response.json();
+        return data.isActive; 
+      } catch(e) {
+        console.error("상태 확인 실패:", e);
+        return true; 
+      }
+    }
+
+    // 🔥 2. 앱 초기화 (상태 체크 후 화면 분기) 🔥
+    async function initApp() {
+      const isOnline = await checkServerStatus();
+      if (!isOnline) {
+        showScreen(screens.maintenance);
+        return; 
+      }
+
+      const savedTreeName = localStorage.getItem('my_tree_name');
+      if (savedTreeName) {
+        el.loadTreeInput.value = savedTreeName;
+        await handleLoadTree(savedTreeName, true);
+      } else {
+        showScreen(screens.intro);
+      }
+    }
 
     function getTreeImagePath(session, style) {
       if (session === 0) return 'tree_0_seed.png';
@@ -799,39 +830,6 @@
       } catch(e) {
         console.error("데이터 불러오기 실패:", e);
         return [];
-      }
-    }
-    
-    async function checkServerStatus() {
-      if (!GAS_URL || GAS_URL === "여기에_붙여넣기") return true; 
-      try {
-        // action=checkStatus 파라미터를 보내서 상태를 물어봅니다.
-        const response = await fetch(`${GAS_URL}?action=checkStatus`);
-        const data = await response.json();
-        return data.isActive; // true(활성) 또는 false(비활성) 반환
-      } catch(e) {
-        console.error("상태 확인 실패:", e);
-        return true; // 에러가 나면 일단 접속되게 처리 (필요시 false로 변경 가능)
-      }
-    }
-    
-    async function initApp() {
-      // 1. 설정 시트의 활성화 여부 확인
-      const isOnline = await checkServerStatus();
-      
-      // 2. 비활성화 상태라면 점검 화면 띄우고 정지
-      if (!isOnline) {
-        document.getElementById('screen-maintenance').classList.add('active');
-        return; 
-      }
-
-      // 3. 활성화 상태라면 원래대로 게임 진행
-      const savedTreeName = localStorage.getItem('my_tree_name');
-      if (savedTreeName) {
-        el.loadTreeInput.value = savedTreeName;
-        await handleLoadTree(savedTreeName, true);
-      } else {
-        showScreen(screens.intro);
       }
     }
 
@@ -874,13 +872,18 @@
       }
     }
 
+    // 🔥 3. 날짜 포맷팅을 강제한 저장 함수 🔥
     async function saveRecord(type, content) {
       let recordType = '마음 기록';
       if (type === 'weather') recordType = '날씨';
       if (type === 'system') recordType = '시스템';
 
+      const d = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const formattedDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
       const record = {
-        date: new Date().toLocaleString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }),
+        date: formattedDate,
         mbti: state.mbti,
         treeName: state.treeName,
         type: recordType,
@@ -898,6 +901,7 @@
       }
     }
 
+    // 🔥 4. 날짜 포맷팅을 강제한 불러오기 함수 🔥
     async function loadAndRenderHistory() {
       el.historyList.innerHTML = '<p style="text-align:center; padding: 40px 0; font-size: 14px;">기록을 불러오는 중입니다...</p>';
       const history = await fetchHistory(state.treeName);
@@ -913,8 +917,18 @@
         const card = document.createElement('div');
         card.className = 'history-card';
         const badgeClass = item.type === '날씨' ? 'type-badge' : 'type-badge journal';
+        
+        let displayDate = item.date;
+        try {
+          const d = new Date(item.date);
+          if (!isNaN(d.getTime())) {
+            const pad = n => String(n).padStart(2, '0');
+            displayDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+          }
+        } catch(e) {}
+
         card.innerHTML = `
-          <div class="meta"><span>${item.date}</span><span class="${badgeClass}">${item.type}</span></div>
+          <div class="meta"><span>${displayDate}</span><span class="${badgeClass}">${item.type}</span></div>
           <div class="content">${item.content}</div>
         `;
         el.historyList.appendChild(card);
@@ -967,18 +981,18 @@
       el.recordBackdrop.classList.remove('active');
     }
 
-    let modalCallback = null; // 🔥 팝업 확인 후 실행할 작업을 저장하는 변수 🔥
+    let modalCallback = null; 
 
+    // 🔥 5. 팝업 확인 후 콜백을 실행하는 모달 구조 🔥
     function showModal(text, callback = null) {
       el.modalText.innerHTML = text;
       el.modalOverlay.classList.add('active');
-      modalCallback = callback; // 콜백 함수 저장
+      modalCallback = callback; 
     }
 
     function closeModal() {
       el.modalOverlay.classList.remove('active');
       if (modalCallback) {
-        // 팝업이 부드럽게 닫히는 시간(약 0.25초)을 기다린 후 새와 나무 애니메이션 시작!
         setTimeout(modalCallback, 250); 
         modalCallback = null;
       }
@@ -1026,7 +1040,7 @@
         treeWidth = "40%";  
         treeOffset = "10px"; 
       } else if (displaySession >= 7 && displaySession <= 8) {
-        treeWidth = "90%";  
+        treeWidth = "80%";  
         treeOffset = "0px";
       } else if (displaySession >= 9) {
         treeWidth = "120%"; 
@@ -1178,7 +1192,6 @@
       setTimeout(() => burst.remove(), 900);
     }
 
-    // 🔥 새/나비 생성 시, 나무 그리드를 건드리지 않도록 mainScene(전체 배경)에 직접 추가 🔥
     function spawnEffects(type) {
       const stage = el.mainScene; 
       
@@ -1210,14 +1223,14 @@
           bird.style.left = `10%`;
           bird.style.top = `70%`;
           stage.appendChild(bird);
-          setTimeout(() => bird.remove(), 6500); // 6.5초 애니메이션 지속시간에 맞춤
+          setTimeout(() => bird.remove(), 6500); 
       }
     }
 
-    // 🔥 팝업 순서 변경 및 새 생성 조건을 40글자로 수정 완료 🔥
+    // 🔥 6. 모달 닫힌 후 나무가 성장하고 40글자 이상일 때 새가 오도록 수정 🔥
     function processGrowth() {
       state.session += 1;
-      const currentTextLength = state.textLength; // 글자 수를 미리 저장해둡니다 (초기화되기 전)
+      const currentTextLength = state.textLength; 
 
       let message = '';
       if (state.session === 1) message = '첫 마음을 기록했네요!<br>작은 씨앗이 여린 새싹을 틔웠어요.';
@@ -1229,18 +1242,15 @@
       resetRecordForm();
       changeFocusMessage(); 
       
-      // 1. 팝업을 먼저 띄웁니다.
-      // 2. 사용자가 '확인'을 누르면 아래 내부 로직(애니메이션)이 실행됩니다.
       showModal(message, () => {
-        updateMainUI(); // 이때 나무가 다음 단계로 변하고, 게이지가 오름
+        updateMainUI(); 
         
         const treeWrap = document.querySelector('.tree-wrap');
         treeWrap.classList.remove('level-up');
         void treeWrap.offsetWidth; 
         treeWrap.classList.add('level-up');
-        burstTreeParticles(); // 반짝이는 효과
+        burstTreeParticles(); 
         
-        // 저장해둔 텍스트 길이에 따라 새(40자) 또는 나비 소환
         if (currentTextLength >= 40) spawnEffects('bird');
         else if (currentTextLength >= 25) spawnEffects('butterfly');
       });
@@ -1346,7 +1356,6 @@
         }
       });
       
-      // 🔥 콜백 로직이 적용된 closeModal 함수를 바인딩 🔥
       el.modalConfirmBtn.addEventListener('click', closeModal);
       
       el.reflectionInput.addEventListener('input', updateRecordButton);
