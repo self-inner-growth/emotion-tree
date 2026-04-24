@@ -246,10 +246,15 @@
     .ui-overlay { position:absolute; inset:0; z-index:10; padding:16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; }
     
     .top-dashboard { width: 100%; pointer-events: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-    .dash-header { display: flex; justify-content: space-between; align-items: center; }
+    .dash-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    
     .profile-wrap { display: flex; align-items: center; gap: 12px; }
-    .avatar { width:46px; height:46px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4)); display:grid; place-items:center; flex-shrink:0; border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(8px); font-size: 22px; line-height: 1; }
-    .profile-copy strong { display:block; font-size:15px; font-weight:700; margin-bottom: 2px; }
+    .avatar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+    .avatar { width:46px; height:46px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4)); display:grid; place-items:center; border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(8px); font-size: 22px; line-height: 1; margin: 0; }
+    .avatar-name { font-size: 11px; font-weight: 700; color: var(--color-text); background: rgba(255,255,255,0.6); padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.4); box-shadow: var(--shadow-sm); white-space: nowrap; }
+    
+    .profile-copy { padding-top: 2px; }
+    .profile-copy strong { display:block; font-size:14px; font-weight:700; margin-bottom: 4px; line-height: 1.35; word-break: keep-all; }
     .profile-copy span { font-size:12px; color: var(--color-text-muted); }
     #uiSession { display:inline; font-weight: 700; color: var(--color-text); }
     
@@ -263,7 +268,7 @@
     .dash-percent { padding: 6px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(255, 255, 255, 0.6); font-size: 13px; font-weight: 700; color: var(--color-text); box-shadow: var(--shadow-sm); }
     
     .info-group { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 16px; pointer-events: none; }
-    .focus-banner { padding: 10px 16px; border-radius: 999px; font-size: 12px; color: var(--color-text-muted); pointer-events: auto; white-space: nowrap; transition: opacity 0.3s ease; }
+    .focus-banner { padding: 10px 16px; border-radius: 999px; font-size: 12px; color: var(--color-text-muted); pointer-events: auto; white-space: nowrap; transition: opacity 0.3s ease; cursor: pointer; }
     .focus-banner strong { color: var(--color-text); }
     .status-card { width: auto; min-width: 116px; padding: 12px 16px; border-radius: 22px; pointer-events: auto; text-align: center; }
     .status-card strong { display:block; font-size:14px; margin-bottom:4px; white-space: nowrap; }
@@ -288,25 +293,46 @@
     .bottom-tabs { display:grid; grid-template-columns:1fr; padding: 0 16px; margin-top: -4px; margin-bottom: 8px;}
     .record-tab-btn { background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(8px); padding: 14px; border-radius: 20px; font-weight: 600; color: var(--color-text); text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-sm); pointer-events: auto;}
     
+    /* 🔥 날씨 및 기록 팝업 배경 설정 🔥 */
     #screen-record, #screen-weather {
       inset:auto 0 0 0;
       height: auto;
       max-height: min(82dvh, 760px);
       border-radius:28px 28px 0 0;
       transform:translateY(100%);
-      transition: transform 260ms cubic-bezier(.22,1,.36,1);
       opacity:1;
       pointer-events:none;
       z-index:30;
       box-shadow: 0 -20px 48px rgba(25, 43, 61, 0.15);
     }
     
-    #screen-record { background: linear-gradient(180deg, #f7fbff, #eef7f2); padding:22px 20px 22px; }
-    #screen-weather { background: linear-gradient(180deg, rgba(160, 215, 245, 0.9), rgba(220, 244, 255, 0.95)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.6); padding:22px 20px 40px; }
+    #screen-record { 
+      background: linear-gradient(180deg, #f7fbff, #eef7f2); 
+      padding:22px 20px 22px; 
+      transition: transform 260ms cubic-bezier(.22,1,.36,1);
+    }
+    
+    /* 날씨 테마 컬러 전환 애니메이션 설정 */
+    #screen-weather { 
+      background-color: rgba(194, 230, 250, 0.9);
+      background-image: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+      transition: transform 260ms cubic-bezier(.22,1,.36,1), background-color 0.4s ease;
+      backdrop-filter: blur(16px); 
+      -webkit-backdrop-filter: blur(16px); 
+      border-top: 1px solid rgba(255,255,255,0.6); 
+      padding:22px 20px 40px; 
+    }
+    
+    /* 테마별 배경 색상 */
+    #screen-weather.theme-joy { background-color: rgba(255, 232, 160, 0.95); }
+    #screen-weather.theme-sadness { background-color: rgba(210, 222, 235, 0.95); }
+    #screen-weather.theme-anger { background-color: rgba(210, 232, 228, 0.95); }
+    #screen-weather.theme-excitement { background-color: rgba(245, 214, 255, 0.95); }
+    #screen-weather.theme-fatigue { background-color: rgba(240, 214, 195, 0.95); }
     
     #screen-history { z-index: 20; background: #f7fbff; }
     .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .history-header h2 { display: flex; align-items: center; gap: 8px; }
+    .history-header h2 { display: flex; align-items: center; gap: 8px; font-size: 1.5rem; }
     .history-header h2 svg { width: 22px; height: 22px; color: var(--color-primary); }
     .back-btn { padding: 10px; background: rgba(0,0,0,0.05); border-radius: 14px; display: grid; place-items: center;}
     .back-btn svg { width: 20px; height: 20px; }
@@ -443,9 +469,12 @@
         <div class="top-dashboard glass">
           <div class="dash-header">
             <div class="profile-wrap">
-              <div class="avatar" id="avatarIcon">🌱</div>
+              <div class="avatar-wrap">
+                <div class="avatar" id="avatarIcon">🌱</div>
+                <div class="avatar-name" id="uiTreeNickname">내마음이</div>
+              </div>
               <div class="profile-copy">
-                <strong id="uiTreeName">내마음이 · 새싹</strong>
+                <strong id="uiTreeName">깊은 뿌리와 지혜가 있는 ??? 나무</strong>
                 <span>진행 회차 <span id="uiSession">0</span> / 9</span>
               </div>
             </div>
@@ -587,11 +616,10 @@
 
     const state = {
       mbtiSelections: { E_I: '', S_N: '', T_F: '', J_P: '' },
-      mbti: '', treeType: '', treeName: '', session: 0, maxSession: 9, // 9회차로 변경
+      mbti: '', treeType: '', treeName: '', session: 0, maxSession: 9,
       selectedEmotion: '', textLength: 0
     };
 
-    // 나무 종류 매핑: modifier(수식어)와 실제 type 추가
     const treeDataMap = {
       INTJ: { type: '바오밥 나무', modifier: '깊은 뿌리와 지혜가 있는', style: 'baobab' },
       INTP: { type: '바오밥 나무', modifier: '깊은 뿌리와 지혜가 있는', style: 'baobab' },
@@ -677,6 +705,7 @@
       focusCopy: document.getElementById('focusCopy'),
       focusBanner: document.getElementById('focusBanner'),
       sunGlow: document.getElementById('sunGlow'),
+      uiTreeNickname: document.getElementById('uiTreeNickname'),
       uiTreeName: document.getElementById('uiTreeName'),
       uiSession: document.getElementById('uiSession'),
       avatarIcon: document.getElementById('avatarIcon'),
@@ -696,13 +725,12 @@
       history: document.getElementById('screen-history')
     };
 
-    // 이미지 경로 반환 로직
     function getTreeImagePath(session, style) {
       if (session === 0) return 'tree_0_seed.png';
       if (session >= 1 && session <= 3) return 'tree_1_sprout.png';
       if (session >= 4 && session <= 6) return `tree_2_sapling_${style}.png`;
       if (session >= 7 && session <= 8) return `tree_3_tree_${style}.png`;
-      return `tree_4_fruit_${style}.png`; // 9회차(열매)
+      return `tree_4_fruit_${style}.png`; 
     }
 
     async function fetchHistory(treeName) {
@@ -813,6 +841,7 @@
     }
 
     function changeFocusMessage() {
+      if (el.focusBanner.style.opacity === '0') return; 
       el.focusBanner.style.opacity = 0;
       setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * focusMessages.length);
@@ -900,7 +929,6 @@
       
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
-      // SVG 렌더링 대신 이미지 렌더링 적용
       el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" />`;
 
       const treeWrap = document.querySelector(".tree-wrap");
@@ -989,19 +1017,20 @@
     }
 
     function updateMainUI() {
-      const data = treeDataMap[state.mbti] || { type: '참나무', modifier: '듬직하게 그늘을 내어주는', style: 'oak' };
+      const data = treeDataMap[state.mbti] || { type: '참나무', modifier: '듬직하게 숲을 지탱하고 그늘을 내어주는', style: 'oak' };
       const meta = emotionMeta[state.selectedEmotion || 'default'];
       
       state.treeType = data.type;
       screens.main.style.background = `linear-gradient(180deg, ${meta.top}, ${meta.bottom})`;
       el.sunGlow.style.display = meta.sun ? 'block' : 'none';
       
-      // 이름 수식어 및 나무 종류 노출 로직 (9회차 달성 시에만 나무 종류 공개)
-      let displayTreeType = "???";
+      let displayTreeType = "??? 나무";
       if (state.session >= 9) {
-          displayTreeType = data.type;
+          displayTreeType = data.type; 
       }
-      el.uiTreeName.textContent = `${state.treeName || '내마음이'} · ${data.modifier} ${displayTreeType}`;
+      
+      el.uiTreeNickname.textContent = state.treeName || '내마음이';
+      el.uiTreeName.textContent = `${data.modifier} ${displayTreeType}`;
       el.uiSession.textContent = String(Math.min(state.session, state.maxSession));
       
       let avatarEmoji = '🌱';
@@ -1051,11 +1080,9 @@
       setTimeout(() => burst.remove(), 900);
     }
 
-    // 새/나비/반짝임 고급 SVG 효과 발생 함수
     function spawnEffects(type) {
       const stage = document.querySelector('.tree-stage');
       
-      // 공통 반짝임 효과
       for (let i = 0; i < 6; i++) {
           const sparkle = document.createElement('div');
           sparkle.className = 'effect-sparkle';
@@ -1099,7 +1126,6 @@
 
       burstTreeParticles();
 
-      // 글자 수 기준 이펙트 분기 (고급 아이콘 적용)
       if (state.textLength >= 40) {
           spawnEffects('bird');
       } else if (state.textLength >= 25) {
@@ -1115,6 +1141,9 @@
       
       resetRecordForm();
       updateMainUI();
+      
+      changeFocusMessage(); 
+      
       setTimeout(() => showModal(message), 600);
     }
 
@@ -1135,6 +1164,10 @@
       document.querySelectorAll('.emotion-btn').forEach(node => node.classList.remove('selected'));
       btn.classList.add('selected');
       state.selectedEmotion = btn.dataset.emo;
+      
+      // 날씨 팝업 배경색 테마 변경
+      screens.weather.classList.remove('theme-joy', 'theme-sadness', 'theme-anger', 'theme-excitement', 'theme-fatigue');
+      screens.weather.classList.add(`theme-${state.selectedEmotion}`);
       
       updateRecordButton();
       updateWeatherConfirmButton();
@@ -1173,6 +1206,13 @@
     }
 
     function bindEvents() {
+      // 메인 화면 빈 곳 터치 시 포인트 문구 변경
+      screens.main.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+          changeFocusMessage();
+        }
+      });
+      
       el.introStartBtn.addEventListener('click', () => {
         showScreen(screens.mbti);
       });
@@ -1215,6 +1255,7 @@
         saveRecord('weather', meta.label); 
         closeWeatherSheet();
         updateMainUI();
+        changeFocusMessage();
         showToast('오늘의 날씨가 기록되고 배경에 반영됐어요.');
       });
       
