@@ -36,6 +36,9 @@
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
+      /* OS 시스템 폰트 크기 확대 방지 */
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
     
     input, textarea {
@@ -206,9 +209,7 @@
     
     .ground-image-layer {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      left: 0; right: 0; bottom: 0;
       height: 25%;
       background-image: url('field.png'); 
       background-size: cover; 
@@ -218,17 +219,37 @@
       pointer-events: none;
     }
 
-    .tree-stage { position:absolute; inset:0; z-index:6; display:grid; place-items:end center; padding-bottom: 35%; perspective: 1000px; }
+    /* 모바일 최적화를 위한 트리 스테이지 위치 고정 */
+    .tree-stage { 
+      position: absolute; 
+      left: 0; right: 0; bottom: 20%; 
+      height: 45%;
+      z-index: 6; 
+      display: flex; 
+      justify-content: center;
+      align-items: flex-end; 
+      perspective: 1000px; 
+    }
     
     @keyframes treeSway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
     @keyframes levelUpPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,215,0,0)); } 40% { transform: scale(1.08); filter: drop-shadow(0 0 30px rgba(255,215,0,0.8)); } 100% { transform: scale(1); filter: drop-shadow(0 20px 20px rgba(50, 93, 67, 0.25)); } }
     
-    .tree-wrap { position:relative; width:min(88vw, 380px); height: 50vh; display: flex; justify-content: center; align-items: flex-end; transform-origin: center bottom; transition: transform 0.5s ease; }
+    .tree-wrap { 
+      position: relative; 
+      width: min(88vw, 380px); 
+      height: 100%; 
+      display: flex; 
+      justify-content: center; 
+      align-items: flex-end; 
+      transform-origin: center bottom; 
+      transition: transform 0.5s ease; 
+    }
     .tree-wrap.level-up { animation: levelUpPulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     .tree-shadow { position:absolute; bottom: -5px; left:50%; width:60%; height:10%; transform:translateX(-50%); background: radial-gradient(ellipse at center, rgba(38, 92, 45, 0.4) 0%, rgba(38, 92, 45, 0.1) 55%, transparent 72%); filter: blur(6px); transition: all 1s ease; z-index: -1; }
     
     .tree-art { width: 100%; height: 100%; display: flex; justify-content: center; align-items: flex-end; }
-    .tree-art img { max-height: 100%; width: auto; object-fit: contain; filter: drop-shadow(0 18px 18px rgba(50, 93, 67, 0.14)); }
+    /* 이미지가 넘치지 않도록 최대 높이 설정 */
+    .tree-art img { max-height: 100%; max-width: 100%; object-fit: contain; filter: drop-shadow(0 18px 18px rgba(50, 93, 67, 0.14)); }
 
     @keyframes burstFade { 0% { transform: scale(0.5); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
     .tree-burst { position: absolute; inset: 28% 28% auto 28%; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.95) 0 8%, transparent 9%), radial-gradient(circle, rgba(255,225,138,0.8) 0 10%, transparent 11%); filter: blur(8px); animation: burstFade 0.9s ease-out forwards; pointer-events: none; z-index: 10;}
@@ -681,15 +702,6 @@
       ESFP: { type: '단풍나무', modifier: '순간의 아름다움을 화려하게 불태우는', style: 'maple' }
     };
 
-    const emotionTreeTone = {
-      default: { hue: 0, sat: 1, glow: "#ffffff", sway: 1, leafShift: 0 },
-      joy: { hue: 8, sat: 1.08, glow: "#ffe27a", sway: 1.02, leafShift: 8 },
-      sadness: { hue: -18, sat: 0.82, glow: "#c9def5", sway: 0.96, leafShift: -12 },
-      anger: { hue: -30, sat: 0.88, glow: "#c7efe7", sway: 1.12, leafShift: -18 },
-      excitement: { hue: 18, sat: 1.15, glow: "#f7ccff", sway: 1.18, leafShift: 12 },
-      fatigue: { hue: -8, sat: 0.78, glow: "#f4c7a6", sway: 0.9, leafShift: -8 }
-    };
-
     const emotionMeta = {
       default: { label: '기록 전', weather: '평온한 하늘', top: '#95c9ff', bottom: '#f1f8ff', sun: true },
       joy: { label: '기쁨 / 만족', weather: '화창한 날', top: '#78bfff', bottom: '#eff8ff', sun: true },
@@ -703,7 +715,6 @@
       cloud: `<svg viewBox="0 0 24 24" fill="white"><path d="M17.5 19c2.5 0 4.5-2 4.5-4.5S20 10 17.5 10c-.2 0-.4 0-.5.1C16 7.2 13.4 5 10 5 6.1 5 3 8.1 3 12c0 .4.1.8.2 1.2C1.9 13.9 1 15.3 1 17c0 2.2 1.8 4 4 4h12.5z"/></svg>`,
       sparkle: `<svg width="100%" height="100%" viewBox="0 0 24 24"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="rgba(255,240,180,0.9)" filter="drop-shadow(0 0 8px rgba(255,230,100,0.8))"/></svg>`,
       butterfly: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.6));"><path d="M12 12c-2-4-6-5-9-3 0 0 2 6 6 7 2 1 3-4 3-4zm0 0c2-4 6-5 9-3 0 0-2 6-6 7-2 1-3-4-3-4z"/><path d="M12 5v7"/></svg>`,
-      
       bird: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="url(#birdGrad)" stroke="none" stroke-linejoin="round" style="filter: drop-shadow(0 6px 12px rgba(255,255,255,0.8)) drop-shadow(0 0 15px rgba(255, 240, 180, 0.6)); overflow: visible;">
         <defs>
           <linearGradient id="birdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -784,7 +795,6 @@
       maintenance: document.getElementById('screen-maintenance')
     };
 
-    // 🔥 1. 서버 상태 체크 (프로그램 활성화/비활성화) 🔥
     async function checkServerStatus() {
       if (!GAS_URL || GAS_URL === "여기에_붙여넣기") return true; 
       try {
@@ -797,7 +807,6 @@
       }
     }
 
-    // 🔥 2. 앱 초기화 (상태 체크 후 화면 분기) 🔥
     async function initApp() {
       const isOnline = await checkServerStatus();
       if (!isOnline) {
@@ -816,9 +825,9 @@
 
     function getTreeImagePath(session, style) {
       if (session === 0) return 'tree_0_seed.png';
-      if (session >= 1 && session <= 3) return 'tree_1_sprout.png';
-      if (session >= 4 && session <= 6) return `tree_2_sapling_${style}.png`;
-      if (session >= 7 && session <= 8) return `tree_3_tree_${style}.png`;
+      if (session === 1 || session === 2) return 'tree_1_sprout.png';
+      if (session >= 3 && session <= 5) return `tree_2_sapling_${style}.png`;
+      if (session >= 6 && session <= 8) return `tree_3_tree_${style}.png`;
       return `tree_4_fruit_${style}.png`; 
     }
 
@@ -872,7 +881,6 @@
       }
     }
 
-    // 🔥 3. 날짜 포맷팅을 강제한 저장 함수 🔥
     async function saveRecord(type, content) {
       let recordType = '마음 기록';
       if (type === 'weather') recordType = '날씨';
@@ -901,7 +909,6 @@
       }
     }
 
-    // 🔥 4. 날짜 포맷팅을 강제한 불러오기 함수 🔥
     async function loadAndRenderHistory() {
       el.historyList.innerHTML = '<p style="text-align:center; padding: 40px 0; font-size: 14px;">기록을 불러오는 중입니다...</p>';
       const history = await fetchHistory(state.treeName);
@@ -983,7 +990,6 @@
 
     let modalCallback = null; 
 
-    // 🔥 5. 팝업 확인 후 콜백을 실행하는 모달 구조 🔥
     function showModal(text, callback = null) {
       el.modalText.innerHTML = text;
       el.modalOverlay.classList.add('active');
@@ -1030,25 +1036,24 @@
       const displaySession = Math.min(state.session, state.maxSession);
       const imagePath = getTreeImagePath(displaySession, styleKey);
 
-      let treeWidth = "100%"; 
-      let treeOffset = "0px"; 
-      
-      if (displaySession >= 0 && displaySession <= 3) {
-        treeWidth = "12%";  
-        treeOffset = "30px"; 
-      } else if (displaySession >= 4 && displaySession <= 6) {
-        treeWidth = "40%";  
-        treeOffset = "10px"; 
-      } else if (displaySession >= 7 && displaySession <= 8) {
-        treeWidth = "80%";  
-        treeOffset = "0px";
-      } else if (displaySession >= 9) {
-        treeWidth = "120%"; 
-        treeOffset = "0px";
-      }
+      // 매 성장 시 확연한 크기 변화를 위한 증분 스케일링 설정
+      const treeScales = [
+        { w: "12%", off: "30px" }, // 0: 씨앗
+        { w: "18%", off: "25px" }, // 1: 새싹 1
+        { w: "24%", off: "20px" }, // 2: 새싹 2
+        { w: "32%", off: "15px" }, // 3: 묘목 1
+        { w: "42%", off: "10px" }, // 4: 묘목 2
+        { w: "54%", off: "5px" },  // 5: 묘목 3
+        { w: "68%", off: "0px" },  // 6: 나무 1
+        { w: "84%", off: "0px" },  // 7: 나무 2
+        { w: "100%", off: "0px" }, // 8: 나무 3
+        { w: "120%", off: "0px" }  // 9: 열매
+      ];
+
+      const scaleData = treeScales[displaySession] || treeScales[9];
 
       el.treeArt.innerHTML = `<img src="${imagePath}" alt="나무 이미지" 
-        style="width: ${treeWidth}; margin-bottom: ${treeOffset}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
+        style="width: ${scaleData.w}; margin-bottom: ${scaleData.off}; height: auto; transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);" />`;
     }
 
     function renderWeather() {
@@ -1227,7 +1232,6 @@
       }
     }
 
-    // 🔥 6. 모달 닫힌 후 나무가 성장하고 40글자 이상일 때 새가 오도록 수정 🔥
     function processGrowth() {
       state.session += 1;
       const currentTextLength = state.textLength; 
